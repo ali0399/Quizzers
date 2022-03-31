@@ -1,167 +1,213 @@
 package com.example.quizzers
 
-import android.os.Bundle
-import android.os.CountDownTimer
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.*
+import androidx.appcompat.app.AppCompatActivity
+import android.text.Html
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.quizzers.databinding.ActivityGamePlayBinding
 import com.example.quizzers.network.models.Result
+import com.example.quizzers.network.models.TbdResponseModel
 import com.example.quizzers.network.retrofit.QuizzerApi
 import com.example.quizzers.network.retrofit.RetrofitHelper
 import com.example.quizzers.repository.QuizzerRepository
-import com.example.quizzers.ui.theme.QuizzersTheme
 import com.example.quizzers.viewModels.QuizViewModel
 import com.example.quizzers.viewModels.ViewModelFactory
-import kotlinx.coroutines.delay
 
-class GamePlay : ComponentActivity() {
-    //    lateinit var mQuizViewModel: QuizViewModel
+class GamePlay : AppCompatActivity() {
+    val TAG = "GamePlay"
     private val mQuizViewModel: QuizViewModel by viewModels()
-    private val mScore = 0
-    private val TIME_TO_ANSWER = 10000L
-    private val timeLeft = mutableStateOf(TIME_TO_ANSWER)
-    private val questionToShow = mutableStateOf("Question Loading...")
-    var dummy = Result("category1",
-        "type1",
-        "difficult1",
-        "Question Lorem Ipsum aloo pyaj",
-        "correct option",
-        listOf("wrong1", "wrong2", "wrong3"))
-    private val optionsToShow = mutableStateOf(dummy)
+    private var mScore = 0
+    private val timeToAnswer = 11000L
+    private val timeLeft = ""
+    private val questionToShow = ""
+    private val optionsToShow = listOf<String>()
+    lateinit var responseModel: TbdResponseModel
+    lateinit var binding: ActivityGamePlayBinding
+    lateinit var questions: List<Result>
+    var qNbr = 0
+    val timer = object : CountDownTimer(timeToAnswer, 1000L) {
+
+        override fun onTick(millisUntilFinished: Long) {
+//            Log.d(TAG, "onTick: start Qnbr = $qNbr")
+            binding.timerTv.text = (millisUntilFinished / 1000).toString()
+        }
+
+        override fun onFinish() {
+            Log.d(TAG, "onFinish: start Qnbr= $qNbr")
+            binding.timerTv.text = "0"
+            if (++qNbr < 5) {
+                binding.option1Tv.background = ColorDrawable(Color.parseColor("#FFBB86FC"))
+                binding.option2Tv.background = ColorDrawable(Color.parseColor("#FFBB86FC"))
+                binding.option3Tv.background = ColorDrawable(Color.parseColor("#FFBB86FC"))
+                binding.option4Tv.background = ColorDrawable(Color.parseColor("#FFBB86FC"))
+                showQuestion(qNbr, questions[qNbr].question,
+                    makeOptions(questions[qNbr].correct_answer,
+                        questions[qNbr].incorrect_answers))
+                this.start()
+            } else {
+
+                AlertDialog.Builder(this@GamePlay).setTitle("Score").setMessage("$mScore / 10")
+                    .setPositiveButton("OK") { dialog, which ->
+                        dialog.cancel()
+                    }
+                    .setOnCancelListener {
+
+                        finish()
+                    }
+                    .show()
+                Toast.makeText(this@GamePlay,
+                    "Quiz finish. Score= $mScore / 10",
+                    Toast.LENGTH_SHORT).show()
+                this.cancel()
+
+            }
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityGamePlayBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
 
         val quizService = RetrofitHelper.getInstance().create(QuizzerApi::class.java)
         val repository = QuizzerRepository(quizService)
         val quizzerViewModel =
             ViewModelProvider(this, ViewModelFactory(repository)).get(QuizViewModel::class.java)
-        val questions: List<Result>? = quizzerViewModel.mQuiz.value?.results
-        quizzerViewModel.getQuiz()
-        var i = 0
-        val timer = object : CountDownTimer(10000L, 1000L) {
-            override fun onTick(millisUntilFinished: Long) {
-                Log.d("MYLOG", "text updated programmatically i= $i")
-                timeLeft.value = millisUntilFinished
-                if(questions!=null) {
-                    optionsToShow.value = questions[i++]
-                }
 
-            }
+        mQuizViewModel.quiz.observe(this, Observer {
+            responseModel = it
+            runQuiz(it)
 
-            override fun onFinish() {
-                timeLeft.value = 0
-            }
-        }
+        })
+
+    }
+
+    fun runQuiz(responseModel: TbdResponseModel) {
+        questions = responseModel.results!!
+        val optionsToShow =
+            makeOptions(questions[qNbr].correct_answer, questions[qNbr].incorrect_answers)
+        showQuestion(qNbr, questions[qNbr].question, optionsToShow)
+        binding.qNbrTv.text = "1"
         timer.start()
 
+    }
 
-        setContent {
-            QuizzersTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background) {
-//                    //                    val quiz = quizzerViewModel.mQuiz.value?.results
-////                    val questions: List<Result>? = quizzerViewModel.mQuiz.value?.results
-//                    Log.d("GamePlay", "onCreate: set content")
-////                    if (questions != null) {
-////                        for (question in questions) {
-//                    if (questions != null) {
-////            for (question in questions) {
-////                optionsToShow.value  = question
-////            }
-//                        Log.d("setContent", "set question ")
-//                        optionsToShow.value = questions[0]
-//                    }
-                    Quizzing()
-//                        }
-//                    }
-//                    //                    Quizzing(quiz = quizzerViewModel.mQuiz.value?.results!![0])
-//                    quizzerViewModel.getQuiz()
-                }
+    private fun setClickListeners(btnIndex: Int, optionIndex: Int) {
+//        Log.d(TAG, "setClickListeners: $btnIndex start")
+        val optionTv = when (btnIndex) {
+            1 -> binding.option1Tv
+            2 -> binding.option2Tv
+            3 -> binding.option3Tv
+            4 -> binding.option4Tv
+            else -> binding.option4Tv
+        }
+        if (optionIndex == 0) {
+            optionTv.setOnClickListener {
+                Toast.makeText(this, "CORRECT ANSWER!", Toast.LENGTH_SHORT).show()
+                optionTv.background = ColorDrawable(Color.GREEN)
+                updateStats(true)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    //Do something after 100ms
+                    timer.onFinish()
+                }, 2000)
+            }
+        } else {
+            optionTv.setOnClickListener {
+                Toast.makeText(this, "!!!WRONG ANSWER!!!", Toast.LENGTH_SHORT).show()
+                optionTv.background = ColorDrawable(Color.RED)
+                updateStats(false)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    //Do something after 100ms
+                    timer.onFinish()
+                }, 2000)
             }
         }
-
     }
 
-    class Timer : CountDownTimer(10000, 1000) {
-        override fun onTick(millisUntilFinished: Long) {
-            //todo
-            //here you can have your logic to set text to edittext
-        }
+    private fun checkAns(index: Int, optionsToShow: List<List<String>>) {
+        Log.d(TAG, "checkAns: start | options = $optionsToShow")
+        if (optionsToShow[index][1] == "1") {
+            Toast.makeText(this, "CORRECT ANSWER!", Toast.LENGTH_SHORT).show()
+            updateStats(true)
+        } else
+            Toast.makeText(this, "!!!WRONG ANSWER!!!", Toast.LENGTH_SHORT).show()
+    }
 
-        override fun onFinish() {
-            //todo
+    private fun updateStats(ansIsCorrect: Boolean) {
+        if (ansIsCorrect) {
+            mScore += 1
         }
     }
 
-    @Composable
-    fun Quizzing() {
-        val milliseconds by timeLeft
-        val timeText = (milliseconds / 1000).toString()
-        val quizToShow by optionsToShow
 
-        Column(Modifier.fillMaxWidth()) {
-            Text(text = timeText)
-            Spacer(modifier = Modifier.padding(top = 16.dp))
-            Text(text = quizToShow.question,
-                modifier = Modifier.align(Alignment.CenterHorizontally))
-            val options = quizToShow.incorrect_answers + quizToShow.correct_answer
-            Spacer(modifier = Modifier.padding(top = 16.dp))
-            Card {
-                val options1 = 0..3
-                val options2 = 3..4
+    fun makeOptions(correctOption: String, wrongOptions: List<String>): List<List<String>> {
 
-                Column() {
-                    for (i in options1) {
-                        Text(text = options[i],
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .clickable {
-                                    Toast
-                                        .makeText(this@GamePlay,
-                                            "item $i clicked",
-                                            Toast.LENGTH_SHORT)
-                                        .show()
-                                },
-                            style = TextStyle(fontSize = 25.sp))
+        val options = mutableListOf<List<String>>(listOf(correctOption, "1"))
+        for (wrongOption in wrongOptions) {
+            options.add(listOf(wrongOption, "0"))
+        }
+        Log.d(TAG, "before shuffle: $options")
+//        options.shuffle()
+//        Log.d(TAG, "after shuffle: ${options}")
+
+        return options
+    }
+
+    fun showQuestion(qNbr: Int, question: String, options: List<List<String>>) {
+
+        Log.d(TAG, "showQuestion: qNbr = $qNbr")
+
+        binding.qNbrTv.text = (qNbr + 1).toString()
+        val optionIndex = mutableListOf<Int>(0, 1, 2, 3)
+        Log.d(TAG, "showQuestion: option index before shuffle $optionIndex")
+        optionIndex.shuffle()
+        Log.d(TAG, "showQuestion: option index after shuffle $optionIndex")
+        if (Build.VERSION.SDK_INT >= 24) {
+            binding.questionTv.text = Html.fromHtml(question, Html.FROM_HTML_MODE_LEGACY)
+            for (i in options.indices) {
+                when (i) {
+                    0 -> {
+                        binding.option1Tv.text =
+                            Html.fromHtml(options[optionIndex[0]][0], Html.FROM_HTML_MODE_LEGACY)
+                        setClickListeners(1, optionIndex[0])
                     }
-                    Spacer(modifier = Modifier.padding(start = 16.dp))
+                    1 -> {
+                        binding.option2Tv.text =
+                            Html.fromHtml(options[optionIndex[1]][0], Html.FROM_HTML_MODE_LEGACY)
+                        setClickListeners(2, optionIndex[1])
+                    }
+                    2 -> {
+                        binding.option3Tv.text =
+                            Html.fromHtml(options[optionIndex[2]][0], Html.FROM_HTML_MODE_LEGACY)
+                        setClickListeners(3, optionIndex[2])
+                    }
+                    3 -> {
+                        binding.option4Tv.text =
+                            Html.fromHtml(options[optionIndex[3]][0], Html.FROM_HTML_MODE_LEGACY)
+                        setClickListeners(4, optionIndex[3])
+                    }
                 }
             }
-        }
-    }
+        } /*else {
+            binding.questionTv.text = Html.fromHtml(question);
+            for (i in 0..options.size - 1) {
+                when (i) {
+                    0 -> binding.option1Tv.text = Html.fromHtml(options[i][0])
+                    1 -> binding.option2Tv.text = Html.fromHtml(options[i][0])
+                    2 -> binding.option3Tv.text = Html.fromHtml(options[i][0])
+                    3 -> binding.option4Tv.text = Html.fromHtml(options[i][0])
+                }
+            }
+        }*/
 
-    @Preview(showBackground = true)
-    @Composable
-    fun DefaultPreview2() {
-        var dummy = Result("category",
-            "type",
-            "difficult",
-            "Question Lorem Ipsum aloo pyaj",
-            "correct option",
-            listOf("wrong1", "wrong2", "wrong3"))
-        QuizzersTheme {
-            Quizzing()
-        }
     }
 }

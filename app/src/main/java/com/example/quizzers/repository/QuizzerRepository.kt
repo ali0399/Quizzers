@@ -8,13 +8,14 @@ import androidx.lifecycle.MutableLiveData
 class QuizzerRepository(private val quizzerApi: QuizzerApi) {
     private val mQuestions = MutableLiveData<TbdResponseModel>()
 
-    val quetions: TbdResponseModel?
-        get()= mQuestions.value
-    suspend fun getQuestions(options:Map<String,String>):TbdResponseModel?{
+    val quetions: LiveData<TbdResponseModel>
+        get(){
+            return mQuestions
+        }
+    suspend fun getQuestions(options:Map<String,String>){
         val result=quizzerApi.getQuiz(options)
         if(result!=null){
             mQuestions.postValue(result.body())
         }
-        return quetions
     }
 }
