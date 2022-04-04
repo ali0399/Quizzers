@@ -6,6 +6,7 @@ import android.os.*
 import androidx.appcompat.app.AppCompatActivity
 import android.text.Html
 import android.util.Log
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -42,17 +43,16 @@ class GamePlay : AppCompatActivity() {
         override fun onFinish() {
             Log.d(TAG, "onFinish: start Qnbr= $qNbr")
             binding.timerTv.text = "0"
-            if (++qNbr < 5) {
+            if (++qNbr < 10) {
                 binding.option1Tv.background = ColorDrawable(Color.parseColor("#FFBB86FC"))
                 binding.option2Tv.background = ColorDrawable(Color.parseColor("#FFBB86FC"))
                 binding.option3Tv.background = ColorDrawable(Color.parseColor("#FFBB86FC"))
                 binding.option4Tv.background = ColorDrawable(Color.parseColor("#FFBB86FC"))
                 showQuestion(qNbr, questions[qNbr].question,
-                    makeOptions(questions[qNbr].correct_answer,
+                    setupOptions(questions[qNbr].correct_answer,
                         questions[qNbr].incorrect_answers))
                 this.start()
             } else {
-
                 AlertDialog.Builder(this@GamePlay).setTitle("Score").setMessage("$mScore / 10")
                     .setPositiveButton("OK") { dialog, which ->
                         dialog.cancel()
@@ -78,7 +78,7 @@ class GamePlay : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        val quizService = RetrofitHelper.getInstance().create(QuizzerApi::class.java)
+        val quizService = RetrofitHelper.getQuizInstance().create(QuizzerApi::class.java)
         val repository = QuizzerRepository(quizService)
         val quizzerViewModel =
             ViewModelProvider(this, ViewModelFactory(repository)).get(QuizViewModel::class.java)
@@ -94,15 +94,16 @@ class GamePlay : AppCompatActivity() {
     fun runQuiz(responseModel: TbdResponseModel) {
         questions = responseModel.results!!
         val optionsToShow =
-            makeOptions(questions[qNbr].correct_answer, questions[qNbr].incorrect_answers)
+            setupOptions(questions[qNbr].correct_answer, questions[qNbr].incorrect_answers)
         showQuestion(qNbr, questions[qNbr].question, optionsToShow)
         binding.qNbrTv.text = "1"
         timer.start()
 
     }
 
-    private fun setClickListeners(btnIndex: Int, optionIndex: Int) {
-//        Log.d(TAG, "setClickListeners: $btnIndex start")
+    private fun setClickListeners(btnIndex: Int, optionIndex: Int, correctOptionTv: TextView) {
+        Log.d(TAG, "setClickListeners: $btnIndex start")
+
         val optionTv = when (btnIndex) {
             1 -> binding.option1Tv
             2 -> binding.option2Tv
@@ -115,6 +116,7 @@ class GamePlay : AppCompatActivity() {
                 Toast.makeText(this, "CORRECT ANSWER!", Toast.LENGTH_SHORT).show()
                 optionTv.background = ColorDrawable(Color.GREEN)
                 updateStats(true)
+                timer.cancel()
                 Handler(Looper.getMainLooper()).postDelayed({
                     //Do something after 100ms
                     timer.onFinish()
@@ -124,7 +126,10 @@ class GamePlay : AppCompatActivity() {
             optionTv.setOnClickListener {
                 Toast.makeText(this, "!!!WRONG ANSWER!!!", Toast.LENGTH_SHORT).show()
                 optionTv.background = ColorDrawable(Color.RED)
+                Log.d(TAG, "setClickListeners: correct = ${correctOptionTv?.text}")
+                correctOptionTv?.let { it.background = ColorDrawable(Color.GREEN) }
                 updateStats(false)
+                timer.cancel()
                 Handler(Looper.getMainLooper()).postDelayed({
                     //Do something after 100ms
                     timer.onFinish()
@@ -149,19 +154,6 @@ class GamePlay : AppCompatActivity() {
     }
 
 
-    fun makeOptions(correctOption: String, wrongOptions: List<String>): List<List<String>> {
-
-        val options = mutableListOf<List<String>>(listOf(correctOption, "1"))
-        for (wrongOption in wrongOptions) {
-            options.add(listOf(wrongOption, "0"))
-        }
-        Log.d(TAG, "before shuffle: $options")
-//        options.shuffle()
-//        Log.d(TAG, "after shuffle: ${options}")
-
-        return options
-    }
-
     fun showQuestion(qNbr: Int, question: String, options: List<List<String>>) {
 
         Log.d(TAG, "showQuestion: qNbr = $qNbr")
@@ -173,30 +165,6 @@ class GamePlay : AppCompatActivity() {
         Log.d(TAG, "showQuestion: option index after shuffle $optionIndex")
         if (Build.VERSION.SDK_INT >= 24) {
             binding.questionTv.text = Html.fromHtml(question, Html.FROM_HTML_MODE_LEGACY)
-            for (i in options.indices) {
-                when (i) {
-                    0 -> {
-                        binding.option1Tv.text =
-                            Html.fromHtml(options[optionIndex[0]][0], Html.FROM_HTML_MODE_LEGACY)
-                        setClickListeners(1, optionIndex[0])
-                    }
-                    1 -> {
-                        binding.option2Tv.text =
-                            Html.fromHtml(options[optionIndex[1]][0], Html.FROM_HTML_MODE_LEGACY)
-                        setClickListeners(2, optionIndex[1])
-                    }
-                    2 -> {
-                        binding.option3Tv.text =
-                            Html.fromHtml(options[optionIndex[2]][0], Html.FROM_HTML_MODE_LEGACY)
-                        setClickListeners(3, optionIndex[2])
-                    }
-                    3 -> {
-                        binding.option4Tv.text =
-                            Html.fromHtml(options[optionIndex[3]][0], Html.FROM_HTML_MODE_LEGACY)
-                        setClickListeners(4, optionIndex[3])
-                    }
-                }
-            }
         } /*else {
             binding.questionTv.text = Html.fromHtml(question);
             for (i in 0..options.size - 1) {
@@ -209,5 +177,59 @@ class GamePlay : AppCompatActivity() {
             }
         }*/
 
+
+    }
+
+    fun setupOptions(correctOption: String, wrongOptions: List<String>): List<List<String>> {
+
+        val options = mutableListOf<List<String>>(listOf(correctOption, "1"))
+        for (wrongOption in wrongOptions) {
+            options.add(listOf(wrongOption, "0"))
+        }
+        Log.d(TAG, "before shuffle: $options")
+//        options.shuffle()
+//        Log.d(TAG, "after shuffle: ${options}")
+        val optionIndex = mutableListOf<Int>(0, 1, 2, 3)
+        Log.d(TAG, "showQuestion: option index before shuffle $optionIndex")
+        optionIndex.shuffle()
+        var correctOptionTv: TextView
+        val correctOptionIndex = optionIndex.indexOf(0)
+        correctOptionTv = when(correctOptionIndex){
+            0-> binding.option1Tv
+            1-> binding.option2Tv
+            2-> binding.option3Tv
+            3-> binding.option4Tv
+            else->binding.option4Tv
+        }
+        Log.d(TAG, "showQuestion: option index after shuffle $optionIndex")
+        if (Build.VERSION.SDK_INT >= 24) {
+            binding.option1Tv.text =
+                Html.fromHtml(options[optionIndex[0]][0], Html.FROM_HTML_MODE_LEGACY)
+            setClickListeners(1, optionIndex[0],correctOptionTv)
+
+            binding.option2Tv.text =
+                Html.fromHtml(options[optionIndex[1]][0], Html.FROM_HTML_MODE_LEGACY)
+            setClickListeners(2, optionIndex[1], correctOptionTv)
+
+            binding.option3Tv.text =
+                Html.fromHtml(options[optionIndex[2]][0], Html.FROM_HTML_MODE_LEGACY)
+            setClickListeners(3, optionIndex[2], correctOptionTv)
+
+            binding.option4Tv.text =
+                Html.fromHtml(options[optionIndex[3]][0], Html.FROM_HTML_MODE_LEGACY)
+            setClickListeners(4, optionIndex[3], correctOptionTv)
+        } /*else {
+            binding.questionTv.text = Html.fromHtml(question);
+            for (i in 0..options.size - 1) {
+                when (i) {
+                    0 -> binding.option1Tv.text = Html.fromHtml(options[i][0])
+                    1 -> binding.option2Tv.text = Html.fromHtml(options[i][0])
+                    2 -> binding.option3Tv.text = Html.fromHtml(options[i][0])
+                    3 -> binding.option4Tv.text = Html.fromHtml(options[i][0])
+                }
+            }
+        }*/
+
+        return options
     }
 }

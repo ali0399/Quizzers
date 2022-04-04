@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/activity_game_play.xml" value="0.264" />
+        <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/drawable-anydpi/ic_action_name.xml" value="0.2555" />
+        <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/activity_game_play.xml" value="0.4" />
+        <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/activity_login.xml" value="0.176" />
       </map>
     </option>
   </component>

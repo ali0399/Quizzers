@@ -3,11 +3,10 @@ package com.example.quizzers.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.quizzers.network.models.CreateUserRequestModel
-import com.example.quizzers.repository.QuizzerRepository
+import com.example.quizzers.repository.ProfileRepository
 
-class ViewModelFactory(private val repository:QuizzerRepository):ViewModelProvider.Factory {
+class ProfileViewModelFactory(private val repository:ProfileRepository,private val requestBody: Any):ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return QuizViewModel(repository) as T
+        return ProfileViewModel(repository) as T
     }
-
 }

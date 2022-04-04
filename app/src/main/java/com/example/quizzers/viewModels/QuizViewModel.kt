@@ -25,8 +25,5 @@ class QuizViewModel(private val repository: QuizzerRepository) : ViewModel() {
     }
     val quiz: LiveData<TbdResponseModel>
         get() = repository.quetions
-//
-//    fun getQuiz() {
-//
-//    }
+
 }
