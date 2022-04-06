@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Quizzers" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/primaryDarkColor</item>
+        <item name="android:background">@color/primaryColor</item>
+        <item name="background">@color/primaryColor</item>
+    </style>
+</resources>

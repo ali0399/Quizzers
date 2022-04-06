@@ -44,10 +44,10 @@ class GamePlay : AppCompatActivity() {
             Log.d(TAG, "onFinish: start Qnbr= $qNbr")
             binding.timerTv.text = "0"
             if (++qNbr < 10) {
-                binding.option1Tv.background = ColorDrawable(Color.parseColor("#FFBB86FC"))
-                binding.option2Tv.background = ColorDrawable(Color.parseColor("#FFBB86FC"))
-                binding.option3Tv.background = ColorDrawable(Color.parseColor("#FFBB86FC"))
-                binding.option4Tv.background = ColorDrawable(Color.parseColor("#FFBB86FC"))
+                binding.option1Tv.setBackgroundResource(R.drawable.option_bg)
+                binding.option2Tv.setBackgroundResource(R.drawable.option_bg)
+                binding.option3Tv.setBackgroundResource(R.drawable.option_bg)
+                binding.option4Tv.setBackgroundResource(R.drawable.option_bg)
                 showQuestion(qNbr, questions[qNbr].question,
                     setupOptions(questions[qNbr].correct_answer,
                         questions[qNbr].incorrect_answers))
@@ -58,7 +58,6 @@ class GamePlay : AppCompatActivity() {
                         dialog.cancel()
                     }
                     .setOnCancelListener {
-
                         finish()
                     }
                     .show()
@@ -114,7 +113,7 @@ class GamePlay : AppCompatActivity() {
         if (optionIndex == 0) {
             optionTv.setOnClickListener {
                 Toast.makeText(this, "CORRECT ANSWER!", Toast.LENGTH_SHORT).show()
-                optionTv.background = ColorDrawable(Color.GREEN)
+                optionTv.setBackgroundResource(R.drawable.option_correct_bg)
                 updateStats(true)
                 timer.cancel()
                 Handler(Looper.getMainLooper()).postDelayed({
@@ -125,9 +124,9 @@ class GamePlay : AppCompatActivity() {
         } else {
             optionTv.setOnClickListener {
                 Toast.makeText(this, "!!!WRONG ANSWER!!!", Toast.LENGTH_SHORT).show()
-                optionTv.background = ColorDrawable(Color.RED)
+                optionTv.setBackgroundResource(R.drawable.option_wrong_bg)
                 Log.d(TAG, "setClickListeners: correct = ${correctOptionTv?.text}")
-                correctOptionTv?.let { it.background = ColorDrawable(Color.GREEN) }
+                correctOptionTv?.let { it.setBackgroundResource(R.drawable.option_correct_bg) }
                 updateStats(false)
                 timer.cancel()
                 Handler(Looper.getMainLooper()).postDelayed({
