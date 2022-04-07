@@ -4,10 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.quizzers.network.models.CreateUserRequestModel
-import com.example.quizzers.network.models.CreateUserResponseModel
-import com.example.quizzers.network.models.LoginRequestModel
-import com.example.quizzers.network.models.LoginResponseModel
+import com.example.quizzers.network.models.*
 import com.example.quizzers.repository.ProfileRepository
 import kotlinx.coroutines.launch
 
@@ -30,10 +27,18 @@ class ProfileViewModel(
             repository.login(requestBody)
         }
     }
-    fun createUser(requestBody: CreateUserRequestModel){
+
+    fun createUser(requestBody: CreateUserRequestModel) {
         Log.d(TAG, "createUser: start")
         viewModelScope.launch {
             repository.createUser(requestBody)
+        }
+    }
+
+    fun createScore(token: String, requestBody: CreateScoreRequestModel) {
+        Log.d(TAG, "createUser: start")
+        viewModelScope.launch {
+            repository.createScore(token, requestBody)
         }
     }
 
@@ -47,6 +52,8 @@ class ProfileViewModel(
     val createUserResponse: LiveData<CreateUserResponseModel>
         get() = repository.createUserResponse
     val loginResponse: LiveData<LoginResponseModel>
-        get()= repository.loginResponse
+        get() = repository.loginResponse
+    val createScoreResponse: LiveData<CreateScoreResponseModel>
+        get() = repository.scoreResponse
 
 }

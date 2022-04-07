@@ -48,8 +48,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/passwordEt"
         android:layout_margin="42dp"
-        android:text="@string/login"
-        android:background="@color/purple_200"/>
+        android:text="@string/login" />
     <Button
         android:id="@+id/switchLoginView"
         android:layout_width="match_parent"

@@ -2,10 +2,7 @@ package com.example.quizzers.network.retrofit
 
 import com.example.quizzers.network.models.*
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.QueryMap
+import retrofit2.http.*
 
 interface QuizzerProfileApi {
     @POST("accounts/create")
@@ -13,4 +10,10 @@ interface QuizzerProfileApi {
 
     @POST("accounts/login")
     suspend fun login(@Body body: LoginRequestModel): Response<LoginResponseModel>
+
+    @POST("score/create")
+    suspend fun createScore(
+        @Header("Authorization") token: String,
+        @Body body: CreateScoreRequestModel,
+    ): Response<CreateScoreResponseModel>
 }

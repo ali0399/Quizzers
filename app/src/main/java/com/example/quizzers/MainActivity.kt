@@ -1,6 +1,7 @@
 package com.example.quizzers
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.example.quizzers.ui.theme.QuizzersTheme
 
 class MainActivity : ComponentActivity() {
-
+    private lateinit var prefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +31,11 @@ class MainActivity : ComponentActivity() {
                     Greeting(name = "chaman bahar")
                 }
             }
+        }
+        prefs = getSharedPreferences("QuizerPrefs", MODE_PRIVATE)
+        val loggedIn = prefs.getBoolean("LoggedIn", false)
+        if (!loggedIn) {
+            startActivity(Intent(this, LoginActivity::class.java))
         }
     }
     @Composable

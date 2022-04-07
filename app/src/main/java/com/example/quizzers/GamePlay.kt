@@ -1,5 +1,7 @@
 package com.example.quizzers
 
+import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.*
@@ -13,17 +15,23 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.quizzers.databinding.ActivityGamePlayBinding
-import com.example.quizzers.network.models.Result
-import com.example.quizzers.network.models.TbdResponseModel
+import com.example.quizzers.network.models.*
 import com.example.quizzers.network.retrofit.QuizzerApi
+import com.example.quizzers.network.retrofit.QuizzerProfileApi
 import com.example.quizzers.network.retrofit.RetrofitHelper
+import com.example.quizzers.repository.ProfileRepository
 import com.example.quizzers.repository.QuizzerRepository
+import com.example.quizzers.viewModels.ProfileViewModel
+import com.example.quizzers.viewModels.ProfileViewModelFactory
 import com.example.quizzers.viewModels.QuizViewModel
 import com.example.quizzers.viewModels.ViewModelFactory
 
 class GamePlay : AppCompatActivity() {
     val TAG = "GamePlay"
-    private val mQuizViewModel: QuizViewModel by viewModels()
+    private lateinit var prefs: SharedPreferences
+
+    //    private val mQuizViewModel: QuizViewModel by viewModels()
+    private lateinit var profileViewModel: ProfileViewModel
     private var mScore = 0
     private val timeToAnswer = 11000L
     private val timeLeft = ""
@@ -55,6 +63,19 @@ class GamePlay : AppCompatActivity() {
             } else {
                 AlertDialog.Builder(this@GamePlay).setTitle("Score").setMessage("$mScore / 10")
                     .setPositiveButton("OK") { dialog, which ->
+                        val profileService: QuizzerProfileApi =
+                            RetrofitHelper.getProfileInstance()
+                                .create(QuizzerProfileApi::class.java)
+                        val profileRepository = ProfileRepository(profileService)
+                        profileViewModel = ViewModelProvider(this@GamePlay,
+                            ProfileViewModelFactory(profileRepository)).get(ProfileViewModel::class.java)
+                        val scoreRequest = CreateScoreRequestModel(10, 5, mScore)
+                        val token = prefs.getString("Token", "")!!
+                        profileViewModel.createScore(token, scoreRequest)
+                        profileViewModel.createScoreResponse.observe(this@GamePlay, Observer {
+                            Log.d(TAG, "onFinish: create score : $it")
+                        })
+
                         dialog.cancel()
                     }
                     .setOnCancelListener {
@@ -76,13 +97,14 @@ class GamePlay : AppCompatActivity() {
         binding = ActivityGamePlayBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        prefs = getSharedPreferences("QuizerPrefs", MODE_PRIVATE)
 
         val quizService = RetrofitHelper.getQuizInstance().create(QuizzerApi::class.java)
         val repository = QuizzerRepository(quizService)
         val quizzerViewModel =
             ViewModelProvider(this, ViewModelFactory(repository)).get(QuizViewModel::class.java)
 
-        mQuizViewModel.quiz.observe(this, Observer {
+        quizzerViewModel.quiz.observe(this, Observer {
             responseModel = it
             runQuiz(it)
 
@@ -193,18 +215,18 @@ class GamePlay : AppCompatActivity() {
         optionIndex.shuffle()
         var correctOptionTv: TextView
         val correctOptionIndex = optionIndex.indexOf(0)
-        correctOptionTv = when(correctOptionIndex){
-            0-> binding.option1Tv
-            1-> binding.option2Tv
-            2-> binding.option3Tv
-            3-> binding.option4Tv
-            else->binding.option4Tv
+        correctOptionTv = when (correctOptionIndex) {
+            0 -> binding.option1Tv
+            1 -> binding.option2Tv
+            2 -> binding.option3Tv
+            3 -> binding.option4Tv
+            else -> binding.option4Tv
         }
         Log.d(TAG, "showQuestion: option index after shuffle $optionIndex")
         if (Build.VERSION.SDK_INT >= 24) {
             binding.option1Tv.text =
                 Html.fromHtml(options[optionIndex[0]][0], Html.FROM_HTML_MODE_LEGACY)
-            setClickListeners(1, optionIndex[0],correctOptionTv)
+            setClickListeners(1, optionIndex[0], correctOptionTv)
 
             binding.option2Tv.text =
                 Html.fromHtml(options[optionIndex[1]][0], Html.FROM_HTML_MODE_LEGACY)

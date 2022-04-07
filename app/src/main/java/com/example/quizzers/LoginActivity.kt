@@ -1,6 +1,7 @@
 package com.example.quizzers
 
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -21,28 +22,28 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var profileViewModel: ProfileViewModel
     private var loggedIn = false
     private var isNewUser = false
+    private lateinit var prefs: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        prefs = getSharedPreferences("QuizerPrefs", MODE_PRIVATE)
         var emailId = ""
         var password = ""
 
         val profileService: QuizzerProfileApi =
             RetrofitHelper.getProfileInstance().create(QuizzerProfileApi::class.java)
-        val profileRepository: ProfileRepository = ProfileRepository(profileService)
+        val profileRepository = ProfileRepository(profileService)
         val createUserRequest = CreateUserRequestModel("ali.ateeq26@gmail.com",
             "ali.ateeq26@gmail.com",
             "password@12")
         val loginRequestBody = LoginRequestModel("rahman.ateeq26@gmail.com", "password@12")
         profileViewModel = ViewModelProvider(this,
-            ProfileViewModelFactory(profileRepository,
-                createUserRequest)).get(ProfileViewModel::class.java)
+            ProfileViewModelFactory(profileRepository)).get(ProfileViewModel::class.java)
 
         binding.loginBtn.setOnClickListener {
-                login()
-            }
+            login()
+        }
 
 
         binding.switchLoginView.setOnClickListener {
@@ -54,10 +55,9 @@ class LoginActivity : AppCompatActivity() {
                         login()
                     }
                 }
-                binding.usernameEt.hint="Username"
+                binding.usernameEt.hint = "Username"
                 binding.switchLoginView.text = resources.getText(R.string.switch_to_new_user)
-            }
-            else {//currentView:Login| change view for new User
+            } else {//currentView:Login| change view for new User
                 isNewUser = true
                 with(binding.loginBtn) {
                     text = "Create Account"
@@ -65,7 +65,7 @@ class LoginActivity : AppCompatActivity() {
                         createUser()
                     }
                 }
-                binding.usernameEt.hint="Email Id"
+                binding.usernameEt.hint = "Email Id"
                 binding.switchLoginView.text = resources.getText(R.string.switch_to_login)
             }
         }
@@ -105,8 +105,13 @@ class LoginActivity : AppCompatActivity() {
         profileViewModel.login(loginRequestBody)
 
         profileViewModel.loginResponse.observe(this, Observer {
-            Log.d(TAG, "onCreate: ${it}")
+            Log.d(TAG, "login: response= ${it}")
             if (it.token != null) {
+                with(prefs.edit()) {
+                    putString("Token", "Token " + it.token).apply()
+                    putBoolean("LoggedIn", true).apply()
+                }
+                Log.d(TAG, "login: start Main Activity")
                 startActivity(Intent(this, MainActivity::class.java))
             }
         })
