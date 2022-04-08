@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.quizzers.network.models.*
 import com.example.quizzers.repository.ProfileRepository
 import kotlinx.coroutines.launch
+import retrofit2.http.Body
 
 class ProfileViewModel(
     private val repository: ProfileRepository
@@ -49,6 +50,13 @@ class ProfileViewModel(
         }
     }
 
+    fun updateUsername(token: String, body: UsernameUpdateModel) {
+        Log.d(TAG, "getProfileDetail: start")
+        viewModelScope.launch {
+            repository.updateUsername(token, body)
+        }
+    }
+
 
 //    fun createUser(requestBody:Any){
 //        Log.d(TAG, "createUser: start")
@@ -65,5 +73,7 @@ class ProfileViewModel(
         get() = repository.scoreResponse
     val profileDetails: LiveData<ProfileDetailResponseModel>
         get() = repository.profileResponse
+    val usernameUpdateResponse: LiveData<UsernameUpdateModel>
+        get() = repository.usernameUpdateResponse
 
 }

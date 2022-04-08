@@ -63,4 +63,17 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
         if (result != null)
             mProfileDetailResponse.postValue(result.body())
     }
+
+    //update username
+    private val mUsernameUpdateResponse = MutableLiveData<UsernameUpdateModel>()
+    val usernameUpdateResponse: LiveData<UsernameUpdateModel>
+        get() {
+            return mUsernameUpdateResponse
+        }
+
+    suspend fun updateUsername(token: String, body: UsernameUpdateModel) {
+        val result = quizzerProfileApi.updateUsername(token, body)
+        if (result != null)
+            mUsernameUpdateResponse.postValue(result.body())
+    }
 }

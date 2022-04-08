@@ -107,7 +107,7 @@ class GamePlay : AppCompatActivity() {
             ViewModelProvider(this, ViewModelFactory(repository)).get(QuizViewModel::class.java)
 
         quizzerViewModel.quiz.observe(this, Observer {
-            responseModel = it
+            responseModel = it  //todo remove
             runQuiz(it)
 
         })

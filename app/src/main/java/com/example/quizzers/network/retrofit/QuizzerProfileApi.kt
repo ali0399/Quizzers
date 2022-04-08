@@ -20,4 +20,10 @@ interface QuizzerProfileApi {
     @GET("accounts/details")
     suspend fun getProfileDetails(@Header("Authorization") token: String): Response<ProfileDetailResponseModel>
 
+    @PUT("accounts/update")
+    suspend fun updateUsername(
+        @Header("Authorization") token: String,
+        @Body body: UsernameUpdateModel,
+    ): Response<UsernameUpdateModel>
+
 }
