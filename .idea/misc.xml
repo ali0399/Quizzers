@@ -10,6 +10,7 @@
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/drawable/option_wrong_bg.xml" value="0.1825" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/drawable/stopwatch_icon.xml" value="0.1825" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/activity_game_play.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/activity_home.xml" value="0.176" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/activity_login.xml" value="0.176" />
       </map>
     </option>
@@ -19,5 +20,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.1" />
+      </ProjectState>
+    </option>
   </component>
 </project>

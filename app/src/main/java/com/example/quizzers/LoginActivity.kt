@@ -112,7 +112,7 @@ class LoginActivity : AppCompatActivity() {
                     putBoolean("LoggedIn", true).apply()
                 }
                 Log.d(TAG, "login: start Main Activity")
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(Intent(this, HomeActivity::class.java))
             }
         })
     }

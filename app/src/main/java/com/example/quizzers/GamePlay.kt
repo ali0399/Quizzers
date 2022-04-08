@@ -66,6 +66,8 @@ class GamePlay : AppCompatActivity() {
                         val profileService: QuizzerProfileApi =
                             RetrofitHelper.getProfileInstance()
                                 .create(QuizzerProfileApi::class.java)
+
+                        //upload score
                         val profileRepository = ProfileRepository(profileService)
                         profileViewModel = ViewModelProvider(this@GamePlay,
                             ProfileViewModelFactory(profileRepository)).get(ProfileViewModel::class.java)
@@ -252,5 +254,10 @@ class GamePlay : AppCompatActivity() {
         }*/
 
         return options
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
     }
 }

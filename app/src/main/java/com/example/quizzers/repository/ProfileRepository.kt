@@ -50,4 +50,17 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
             mCreateScoreResponse.postValue(result.body())
         }
     }
+
+    //get Profile detail
+    private val mProfileDetailResponse = MutableLiveData<ProfileDetailResponseModel>()
+    val profileResponse: LiveData<ProfileDetailResponseModel>
+        get() {
+            return mProfileDetailResponse
+        }
+
+    suspend fun getProfileDetail(token: String) {
+        val result = quizzerProfileApi.getProfileDetails(token)
+        if (result != null)
+            mProfileDetailResponse.postValue(result.body())
+    }
 }

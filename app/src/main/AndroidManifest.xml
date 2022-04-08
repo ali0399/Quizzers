@@ -13,21 +13,23 @@
         android:theme="@style/Theme.Quizzers"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".HomeActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".LoginActivity"
             android:exported="true"
             android:label="@string/title_activity_login"
-            android:theme="@style/Theme.Quizzers">
-
-        </activity>
+            android:theme="@style/Theme.Quizzers"></activity>
         <activity
             android:name=".GamePlay"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
-        <activity
-            android:name=".MainActivity2"
-            android:exported="false"
-            android:label="@string/title_activity_main2"
-            android:theme="@style/Theme.Quizzers" />
         <activity
             android:name=".GamePlayCompose"
             android:exported="false"
@@ -37,11 +39,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Quizzers">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

@@ -16,4 +16,8 @@ interface QuizzerProfileApi {
         @Header("Authorization") token: String,
         @Body body: CreateScoreRequestModel,
     ): Response<CreateScoreResponseModel>
+
+    @GET("accounts/details")
+    suspend fun getProfileDetails(@Header("Authorization") token: String): Response<ProfileDetailResponseModel>
+
 }

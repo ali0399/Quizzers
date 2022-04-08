@@ -42,6 +42,14 @@ class ProfileViewModel(
         }
     }
 
+    fun getProfileDetail(token: String) {
+        Log.d(TAG, "getProfileDetail: start")
+        viewModelScope.launch {
+            repository.getProfileDetail(token)
+        }
+    }
+
+
 //    fun createUser(requestBody:Any){
 //        Log.d(TAG, "createUser: start")
 //        viewModelScope.launch {
@@ -55,5 +63,7 @@ class ProfileViewModel(
         get() = repository.loginResponse
     val createScoreResponse: LiveData<CreateScoreResponseModel>
         get() = repository.scoreResponse
+    val profileDetails: LiveData<ProfileDetailResponseModel>
+        get() = repository.profileResponse
 
 }

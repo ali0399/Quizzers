@@ -7,4 +7,5 @@
     <string name="switch_to_login">Existing User? Login.</string>
     <string name="create_account">Create Account</string>
     <string name="login">Login</string>
+    <string name="Username">%1$s %2$s</string>
 </resources>
