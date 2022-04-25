@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.quizzers.network.models.*
 import com.example.quizzers.network.retrofit.QuizzerProfileApi
+import okhttp3.MultipartBody
 
 class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
     //Create User
@@ -75,5 +76,18 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
         val result = quizzerProfileApi.updateUsername(token, body)
         if (result != null)
             mUsernameUpdateResponse.postValue(result.body())
+    }
+
+    //update profile pic
+    private val mPicUploadResponse = MutableLiveData<PicUploadResponse>()
+    val picUploadResponse: LiveData<PicUploadResponse>
+        get() {
+            return mPicUploadResponse
+        }
+
+    suspend fun uploadProfilePhoto(token: String, part: MultipartBody.Part) {
+        val result = quizzerProfileApi.uploadProfilePhoto(token, part)
+        if (result != null)
+            mPicUploadResponse.postValue(result.body())
     }
 }

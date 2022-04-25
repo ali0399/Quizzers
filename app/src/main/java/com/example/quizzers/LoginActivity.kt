@@ -86,8 +86,17 @@ class LoginActivity : AppCompatActivity() {
 //        profileViewModel.createUser(createUserRequest)
         profileViewModel.createUser(createUserRequestBody)
 
-        profileViewModel.loginResponse.observe(this, Observer {
-            Log.d(TAG, "onCreate: ${it}")
+        profileViewModel.createUserResponse.observe(this, Observer {
+            Log.d(TAG, "createUser response: ${it}")
+            if (it.token != null) {
+                with(prefs.edit()) {
+                    putString("Token", "Token " + it.token).apply()
+                    putBoolean("LoggedIn", true).apply()
+                }
+                Log.d(TAG, "login: start Main Activity")
+                startActivity(Intent(this, HomeActivity::class.java))
+                finish()
+            }
         })
     }
 
@@ -113,6 +122,7 @@ class LoginActivity : AppCompatActivity() {
                 }
                 Log.d(TAG, "login: start Main Activity")
                 startActivity(Intent(this, HomeActivity::class.java))
+                finish()
             }
         })
     }

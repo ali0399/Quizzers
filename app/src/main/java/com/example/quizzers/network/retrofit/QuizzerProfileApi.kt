@@ -1,6 +1,7 @@
 package com.example.quizzers.network.retrofit
 
 import com.example.quizzers.network.models.*
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -25,5 +26,13 @@ interface QuizzerProfileApi {
         @Header("Authorization") token: String,
         @Body body: UsernameUpdateModel,
     ): Response<UsernameUpdateModel>
+
+    @Multipart
+    @POST("accounts/picture-update")
+    suspend fun uploadProfilePhoto(
+        @Header("Authorization") token: String,
+        @Part filePart: MultipartBody.Part,
+    ): Response<PicUploadResponse>
+
 
 }

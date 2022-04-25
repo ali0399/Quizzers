@@ -7,7 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.quizzers.network.models.*
 import com.example.quizzers.repository.ProfileRepository
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 import retrofit2.http.Body
+import retrofit2.http.Multipart
 
 class ProfileViewModel(
     private val repository: ProfileRepository
@@ -54,6 +56,13 @@ class ProfileViewModel(
         Log.d(TAG, "getProfileDetail: start")
         viewModelScope.launch {
             repository.updateUsername(token, body)
+        }
+    }
+
+    fun uploadPhoto(token: String, part: MultipartBody.Part) {
+        Log.d(TAG, "getProfileDetail: start")
+        viewModelScope.launch {
+            repository.uploadProfilePhoto(token, part)
         }
     }
 

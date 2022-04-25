@@ -77,10 +77,10 @@ class GamePlay : AppCompatActivity() {
                         profileViewModel.createScoreResponse.observe(this@GamePlay, Observer {
                             Log.d(TAG, "onFinish: create score : $it")
                         })
-
                         dialog.cancel()
                     }
                     .setOnCancelListener {
+                        startActivity(Intent(this@GamePlay, HomeActivity::class.java))
                         finish()
                     }
                     .show()
