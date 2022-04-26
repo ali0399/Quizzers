@@ -2,20 +2,20 @@ package com.example.quizzers
 
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.*
-import androidx.appcompat.app.AppCompatActivity
 import android.text.Html
 import android.util.Log
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.quizzers.databinding.ActivityGamePlayBinding
-import com.example.quizzers.network.models.*
+import com.example.quizzers.network.models.CreateScoreRequestModel
+import com.example.quizzers.network.models.Result
+import com.example.quizzers.network.models.TbdResponseModel
 import com.example.quizzers.network.retrofit.QuizzerApi
 import com.example.quizzers.network.retrofit.QuizzerProfileApi
 import com.example.quizzers.network.retrofit.RetrofitHelper
@@ -153,6 +153,7 @@ class GamePlay : AppCompatActivity() {
                 correctOptionTv?.let { it.setBackgroundResource(R.drawable.option_correct_bg) }
                 updateStats(false)
                 timer.cancel()
+                optionTv.startAnimation(AnimationUtils.loadAnimation(this, R.anim.shake_anim))
                 Handler(Looper.getMainLooper()).postDelayed({
                     //Do something after 100ms
                     timer.onFinish()

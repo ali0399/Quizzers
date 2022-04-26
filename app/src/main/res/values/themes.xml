@@ -3,7 +3,8 @@
 
     <style name="Theme.Quizzers" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:statusBarColor">@color/colorScheme2</item>
-        <item name="android:background">@drawable/app_bg</item>
-        <item name="background">@color/primaryLightColor</item>
+        <item name="android:background">@color/primaryLightColor</item>
+        <item name="background">@drawable/app_bg</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
     </style>
 </resources>

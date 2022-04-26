@@ -48,7 +48,7 @@ class ProfileViewModel(
     fun getProfileDetail(token: String) {
         Log.d(TAG, "getProfileDetail: start")
         viewModelScope.launch {
-            repository.getProfileDetail(token)
+                repository.getProfileDetail(token)
         }
     }
 

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.quizzers.network.models.*
 import com.example.quizzers.network.retrofit.QuizzerProfileApi
 import okhttp3.MultipartBody
+import kotlin.Exception
 
 class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
     //Create User
@@ -60,9 +61,14 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
         }
 
     suspend fun getProfileDetail(token: String) {
-        val result = quizzerProfileApi.getProfileDetails(token)
-        if (result != null)
-            mProfileDetailResponse.postValue(result.body())
+        try {
+            val result = quizzerProfileApi.getProfileDetails(token)
+            if (result != null)
+                mProfileDetailResponse.postValue(result.body())
+        } catch (e: Exception) {
+            val errorBody = ProfileDetailResponseModel()
+            mProfileDetailResponse.postValue(errorBody)
+        }
     }
 
     //update username

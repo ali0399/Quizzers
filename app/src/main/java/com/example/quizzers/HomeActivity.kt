@@ -1,5 +1,6 @@
 package com.example.quizzers
 
+import android.animation.ValueAnimator
 import android.content.*
 import android.database.Cursor
 import android.net.Uri
@@ -9,10 +10,12 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.quizzers.databinding.ActivityHomeBinding
 import com.example.quizzers.databinding.EditUsernameDialogBinding
 import com.example.quizzers.network.models.UsernameUpdateModel
@@ -64,15 +67,40 @@ class HomeActivity : AppCompatActivity() {
         Log.d(TAG, "onCreate: logged in")
         profileViewModel.getProfileDetail(token)
         profileViewModel.profileDetails.observe(this, Observer {
-            try {
+            if (it.id != "") {
                 userFirstName = it.first_name
                 userLastName = it.last_name
                 binding.usernameTv.text = getString(R.string.Username, it.first_name, it.last_name)
+                it.userprofile.let {
+                    Glide.with(this).load(it?.display_picture).into(binding.profileIv)
+                }
+
+
                 binding.scoreTv.text = it.total_score.toString()
-            } catch (exp: Exception) {
+                ValueAnimator.ofInt(0, it.total_score).apply {
+                    duration = 1500L
+                    addUpdateListener { updatedAnimation ->
+                        // You can use the animated value in a property that uses the
+                        // same type as the animation. In this case, you can use the
+                        // float value in the translationX property.
+                        binding.scoreTv.text = updatedAnimation.animatedValue.toString()
+                    }
+                    start()
+                }
+
+
+            } else {
                 Log.d(TAG, "onCreate: Error fetching profile details")
-                startActivity(Intent(this, LoginActivity::class.java))
-                finish()
+                Toast.makeText(this, "Network Error!", Toast.LENGTH_SHORT).show()
+                userFirstName = "???"
+                userLastName = "???"
+                binding.apply {
+                    usernameTv.text = getString(R.string.Username, userFirstName, userLastName)
+                    scoreTv.text = "???"
+                    profileIv.setImageResource(R.drawable.ic_connection_error)
+                    startQuizBtn.isEnabled = false
+                }
+
             }
         })
 

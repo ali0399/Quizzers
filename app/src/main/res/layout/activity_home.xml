@@ -111,7 +111,7 @@
                 android:background="@android:color/transparent"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="SCORE:"
+                android:text="SCORE"
                 android:textColor="@color/primaryLightColor"
                 android:textSize="30sp"
                 android:textStyle="bold"
