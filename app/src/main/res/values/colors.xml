@@ -7,7 +7,7 @@
     <color name="secondaryLightColor">#d2e6ff</color>
     <color name="secondaryDarkColor">#6d85cc</color>
     <color name="primaryTextColor">#FFFFFF</color>
-    <color name="secondaryTextColor">#F1F1F1</color>
+    <color name="secondaryTextColor">#3E3E3E</color>
     <color name="correctAnsColor">#40FF53</color>
     <color name="incorrectAnsColor">#FF4040</color>
     <color name="colorScheme1">#000000</color>
@@ -15,5 +15,7 @@
     <color name="colorScheme3">#700B97</color>
     <color name="colorScheme4">#8E05C2</color>
     <color name="colorScheme5">#B050D5</color>
+    <color name="colorScheme6">#EFC7FF</color>
+    <color name="transparent">#00000000</color>
 
 </resources>

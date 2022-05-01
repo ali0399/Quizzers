@@ -16,15 +16,12 @@ import com.example.quizzers.databinding.ActivityGamePlayBinding
 import com.example.quizzers.network.models.CreateScoreRequestModel
 import com.example.quizzers.network.models.Result
 import com.example.quizzers.network.models.TbdResponseModel
-import com.example.quizzers.network.retrofit.QuizzerApi
 import com.example.quizzers.network.retrofit.QuizzerProfileApi
 import com.example.quizzers.network.retrofit.RetrofitHelper
 import com.example.quizzers.repository.ProfileRepository
-import com.example.quizzers.repository.QuizzerRepository
 import com.example.quizzers.viewModels.ProfileViewModel
 import com.example.quizzers.viewModels.ProfileViewModelFactory
-import com.example.quizzers.viewModels.QuizViewModel
-import com.example.quizzers.viewModels.ViewModelFactory
+import com.google.gson.Gson
 
 class GamePlay : AppCompatActivity() {
     val TAG = "GamePlay"
@@ -37,7 +34,6 @@ class GamePlay : AppCompatActivity() {
     private val timeLeft = ""
     private val questionToShow = ""
     private val optionsToShow = listOf<String>()
-    lateinit var responseModel: TbdResponseModel
     lateinit var binding: ActivityGamePlayBinding
     lateinit var questions: List<Result>
     var qNbr = 0
@@ -101,16 +97,34 @@ class GamePlay : AppCompatActivity() {
 
         prefs = getSharedPreferences("QuizerPrefs", MODE_PRIVATE)
 
-        val quizService = RetrofitHelper.getQuizInstance().create(QuizzerApi::class.java)
-        val repository = QuizzerRepository(quizService)
-        val quizzerViewModel =
-            ViewModelProvider(this, ViewModelFactory(repository)).get(QuizViewModel::class.java)
+//        val quizService = RetrofitHelper.getQuizInstance().create(QuizzerApi::class.java)
+//        val repository = QuizzerRepository(quizService)
+//        val quizzerViewModel =
+//            ViewModelProvider(this, ViewModelFactory(repository)).get(QuizViewModel::class.java)
 
-        quizzerViewModel.quiz.observe(this, Observer {
-            responseModel = it  //todo remove
-            runQuiz(it)
-
-        })
+        val st = intent.getStringExtra(QUIZ_DATA)
+        Log.d(TAG, "onCreate: intent data= $st")
+        val quizData = Gson().fromJson(st, TbdResponseModel::class.java)
+        runQuiz(quizData)
+//        quizzerViewModel.errorMsg.observe(this, Observer {
+//            when (it) {
+//                "" -> binding.progressBar.visibility = View.VISIBLE
+//                else -> {//we can add more case specific responses here
+//                    Toast.makeText(this,
+//                        "Network Error: $it",
+//                        Toast.LENGTH_SHORT).show()
+//                    startActivity(Intent(this, HomeActivity::class.java))
+//                    finish()
+//                }
+//            }
+//        })
+//        quizzerViewModel.quiz.observe(this, Observer {
+//            if (it != null) {
+//                binding.progressBar.visibility=View.GONE
+//                runQuiz(it)
+//            }
+//
+//        })
 
     }
 
@@ -134,12 +148,14 @@ class GamePlay : AppCompatActivity() {
             4 -> binding.option4Tv
             else -> binding.option4Tv
         }
+        optionTv.isClickable = true
         if (optionIndex == 0) {
             optionTv.setOnClickListener {
                 Toast.makeText(this, "CORRECT ANSWER!", Toast.LENGTH_SHORT).show()
                 optionTv.setBackgroundResource(R.drawable.option_correct_bg)
                 updateStats(true)
                 timer.cancel()
+                disableOptions()
                 Handler(Looper.getMainLooper()).postDelayed({
                     //Do something after 100ms
                     timer.onFinish()
@@ -148,6 +164,7 @@ class GamePlay : AppCompatActivity() {
         } else {
             optionTv.setOnClickListener {
                 Toast.makeText(this, "!!!WRONG ANSWER!!!", Toast.LENGTH_SHORT).show()
+                disableOptions()
                 optionTv.setBackgroundResource(R.drawable.option_wrong_bg)
                 Log.d(TAG, "setClickListeners: correct = ${correctOptionTv?.text}")
                 correctOptionTv?.let { it.setBackgroundResource(R.drawable.option_correct_bg) }
@@ -159,6 +176,15 @@ class GamePlay : AppCompatActivity() {
                     timer.onFinish()
                 }, 2000)
             }
+        }
+    }
+
+    private fun disableOptions() {
+        with(binding) {
+            option1Tv.isClickable = false
+            option2Tv.isClickable = false
+            option3Tv.isClickable = false
+            option4Tv.isClickable = false
         }
     }
 

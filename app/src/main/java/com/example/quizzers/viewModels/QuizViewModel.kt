@@ -15,14 +15,19 @@ import kotlinx.coroutines.launch
 
 class QuizViewModel(private val repository: QuizzerRepository) : ViewModel() {
 
-    val errorMsg: MutableState<String> = mutableStateOf("")
+    val errorMsg: MutableLiveData<String> = MutableLiveData("")
 
     init {
         Log.d("QuizViewModel", "init: start")
         viewModelScope.launch {
-            repository.getQuestions(mapOf("amount" to "10", "type" to "multiple"))
+            try {
+                repository.getQuestions(mapOf("amount" to "10", "type" to "multiple"))
+            } catch (exp: Exception) {
+                errorMsg.value = exp.toString()
+            }
         }
     }
+
     val quiz: LiveData<TbdResponseModel>
         get() = repository.quetions
 

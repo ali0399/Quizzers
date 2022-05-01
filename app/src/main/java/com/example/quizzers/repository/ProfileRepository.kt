@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import com.example.quizzers.network.models.*
 import com.example.quizzers.network.retrofit.QuizzerProfileApi
 import okhttp3.MultipartBody
-import kotlin.Exception
 
 class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
     //Create User

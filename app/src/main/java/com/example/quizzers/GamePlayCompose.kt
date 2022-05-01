@@ -49,6 +49,7 @@ class GamePlayCompose : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         val quizService = RetrofitHelper.getQuizInstance().create(QuizzerApi::class.java)
         val repository = QuizzerRepository(quizService)
         val quizzerViewModel =

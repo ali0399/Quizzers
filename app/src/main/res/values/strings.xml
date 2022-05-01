@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Quizzers</string>
+    <string name="app_name">Quizerz</string>
     <string name="title_activity_game_play">GamePlay</string>
     <string name="title_activity_main2">MainActivity2</string>
     <string name="title_activity_login">Login</string>

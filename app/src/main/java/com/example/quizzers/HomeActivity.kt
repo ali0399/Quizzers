@@ -10,6 +10,7 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -19,11 +20,16 @@ import com.bumptech.glide.Glide
 import com.example.quizzers.databinding.ActivityHomeBinding
 import com.example.quizzers.databinding.EditUsernameDialogBinding
 import com.example.quizzers.network.models.UsernameUpdateModel
+import com.example.quizzers.network.retrofit.QuizzerApi
 import com.example.quizzers.network.retrofit.QuizzerProfileApi
 import com.example.quizzers.network.retrofit.RetrofitHelper
 import com.example.quizzers.repository.ProfileRepository
+import com.example.quizzers.repository.QuizzerRepository
 import com.example.quizzers.viewModels.ProfileViewModel
 import com.example.quizzers.viewModels.ProfileViewModelFactory
+import com.example.quizzers.viewModels.QuizViewModel
+import com.example.quizzers.viewModels.ViewModelFactory
+import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -33,9 +39,11 @@ import java.net.URISyntaxException
 
 // Request code for selecting a PDF document.
 const val PICK_PDF_FILE = 2
+const val QUIZ_DATA = "QuizData"
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var profileViewModel: ProfileViewModel
+    private lateinit var quizViewModel: QuizViewModel
     private lateinit var prefs: SharedPreferences
     private lateinit var binding: ActivityHomeBinding
     private var userFirstName = "FirstName"
@@ -55,6 +63,8 @@ class HomeActivity : AppCompatActivity() {
         profileViewModel = ViewModelProvider(this,
             ProfileViewModelFactory(profileRepository)).get(ProfileViewModel::class.java)
 
+
+
         prefs = getSharedPreferences("QuizerPrefs", MODE_PRIVATE)
         token = prefs.getString("Token", "")!!
 
@@ -67,16 +77,19 @@ class HomeActivity : AppCompatActivity() {
         Log.d(TAG, "onCreate: logged in")
         profileViewModel.getProfileDetail(token)
         profileViewModel.profileDetails.observe(this, Observer {
-            if (it.id != "") {
-                userFirstName = it.first_name
-                userLastName = it.last_name
-                binding.usernameTv.text = getString(R.string.Username, it.first_name, it.last_name)
-                it.userprofile.let {
-                    Glide.with(this).load(it?.display_picture).into(binding.profileIv)
+            if (it != null && it?.id != "") {
+                userFirstName = if (it.first_name.equals(" ")) "Quiz" else it.first_name
+                userLastName = if (it.last_name == "") "Master" else it.last_name
+                //todo fix blank name
+                binding.usernameTv.text = if (getString(R.string.Username,
+                        it.first_name,
+                        it.last_name) == " "
+                ) "Quiz Master" else getString(R.string.Username, it.first_name, it.last_name)
+                it.userprofile?.let {
+                    Log.d(TAG, "onCreate: null userProfile: ${it}")
+                    Glide.with(this).load(it.display_picture).into(binding.profileIv)
                 }
 
-
-                binding.scoreTv.text = it.total_score.toString()
                 ValueAnimator.ofInt(0, it.total_score).apply {
                     duration = 1500L
                     addUpdateListener { updatedAnimation ->
@@ -98,16 +111,40 @@ class HomeActivity : AppCompatActivity() {
                     usernameTv.text = getString(R.string.Username, userFirstName, userLastName)
                     scoreTv.text = "???"
                     profileIv.setImageResource(R.drawable.ic_connection_error)
-                    startQuizBtn.isEnabled = false
+//                    startQuizBtn.isEnabled = false
                 }
 
             }
         })
 
         binding.startQuizBtn.setOnClickListener {
-            startActivity(Intent(this,
-                GamePlay::class.java))
-            finish()
+            binding.progressBar.visibility = View.VISIBLE
+            val quizService = RetrofitHelper.getQuizInstance().create(QuizzerApi::class.java)
+            val repository = QuizzerRepository(quizService)
+            quizViewModel =
+                ViewModelProvider(this, ViewModelFactory(repository)).get(QuizViewModel::class.java)
+
+            quizViewModel.errorMsg.observe(this, Observer {
+                when (it) {
+                    "" -> binding.progressBar.visibility = View.VISIBLE
+                    else -> {//we can add more case specific responses here
+                        binding.progressBar.visibility = View.GONE
+                        Toast.makeText(this,
+                            "Network Error: $it",
+                            Toast.LENGTH_SHORT).show()
+                    }
+                }
+            })
+
+            quizViewModel.quiz.observe(this, Observer {
+                if (it != null) {
+                    binding.progressBar.visibility = View.GONE
+                    startActivity(Intent(this,
+                        GamePlay::class.java).putExtra(QUIZ_DATA, Gson().toJson(it)))
+                    finish()
+                }
+            })
+
         }
 
         binding.editUsernameBtn.setOnClickListener {
