@@ -8,4 +8,6 @@
     <string name="create_account">Create Account</string>
     <string name="login">Login</string>
     <string name="Username">%1$s %2$s</string>
+    <string name="navDrawerOpen">Drawer Open</string>
+    <string name="navDrawerClose">Drawer Close</string>
 </resources>

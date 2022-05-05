@@ -15,8 +15,13 @@
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/drawable/top_bg.xml" value="0.1385" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/activity_game_play.xml" value="0.2" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/activity_home.xml" value="0.20521590423257802" />
-        <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/activity_login.xml" value="0.264" />
+        <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/activity_login.xml" value="0.10346301838392476" />
+        <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/credits_dialog_layout.xml" value="0.20521590423257802" />
+        <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/drawer_header_layout.xml" value="0.20521590423257802" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/edit_username_dialog.xml" value="0.264" />
+        <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/popup_layout.xml" value="0.20521590423257802" />
+        <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/menu/home_menu.xml" value="0.20521590423257802" />
+        <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/menu/main_menu.xml" value="0.264" />
       </map>
     </option>
   </component>

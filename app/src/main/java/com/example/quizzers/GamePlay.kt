@@ -31,6 +31,7 @@ class GamePlay : AppCompatActivity() {
     private lateinit var profileViewModel: ProfileViewModel
     private var mScore = 0
     private val timeToAnswer = 11000L
+    private var correctAttempts = 0
     private val timeLeft = ""
     private val questionToShow = ""
     private val optionsToShow = listOf<String>()
@@ -67,13 +68,14 @@ class GamePlay : AppCompatActivity() {
                         val profileRepository = ProfileRepository(profileService)
                         profileViewModel = ViewModelProvider(this@GamePlay,
                             ProfileViewModelFactory(profileRepository)).get(ProfileViewModel::class.java)
-                        val scoreRequest = CreateScoreRequestModel(10, 5, mScore)
+                        val scoreRequest = CreateScoreRequestModel(10, correctAttempts, mScore)
                         val token = prefs.getString("Token", "")!!
                         profileViewModel.createScore(token, scoreRequest)
                         profileViewModel.createScoreResponse.observe(this@GamePlay, Observer {
                             Log.d(TAG, "onFinish: create score : $it")
+                            dialog.cancel()
                         })
-                        dialog.cancel()
+
                     }
                     .setOnCancelListener {
                         startActivity(Intent(this@GamePlay, HomeActivity::class.java))
@@ -152,6 +154,7 @@ class GamePlay : AppCompatActivity() {
         if (optionIndex == 0) {
             optionTv.setOnClickListener {
                 Toast.makeText(this, "CORRECT ANSWER!", Toast.LENGTH_SHORT).show()
+                correctAttempts++
                 optionTv.setBackgroundResource(R.drawable.option_correct_bg)
                 updateStats(true)
                 timer.cancel()

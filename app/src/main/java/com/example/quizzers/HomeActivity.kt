@@ -10,10 +10,16 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.util.Log
+import android.view.Menu
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -29,6 +35,7 @@ import com.example.quizzers.viewModels.ProfileViewModel
 import com.example.quizzers.viewModels.ProfileViewModelFactory
 import com.example.quizzers.viewModels.QuizViewModel
 import com.example.quizzers.viewModels.ViewModelFactory
+import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -51,11 +58,52 @@ class HomeActivity : AppCompatActivity() {
     private val TAG = "HomeActivity"
     private lateinit var token: String
 
+    //Variables
+    lateinit var drawerLayout: DrawerLayout
+    lateinit var navigationView: NavigationView
+    var toolbar: Toolbar? = null
+    var menu: Menu? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: start")
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        drawerLayout = binding.drawerLayout
+        navigationView = binding.navDrawerView
+        toolbar = binding.toolbar
+
+        navigationView.bringToFront()
+
+        val toggle = ActionBarDrawerToggle(this,
+            drawerLayout,
+            toolbar,
+            R.string.navDrawerOpen,
+            R.string.navDrawerClose)
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+        navigationView.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.nav_leaderboard -> {
+                    Toast.makeText(this, "LeaderBoard", Toast.LENGTH_SHORT).show()
+                }
+                R.id.nav_category -> {
+
+                    Toast.makeText(this, "nav_category", Toast.LENGTH_SHORT).show()
+                }
+                R.id.nav_logout -> {
+
+                    Toast.makeText(this, "nav_logout", Toast.LENGTH_SHORT).show()
+                }
+                R.id.nav_about -> {
+                    showCredits(findViewById<ConstraintLayout>(R.id.scoreContainer))
+                }
+
+            }
+            drawerLayout.closeDrawer(GravityCompat.START)
+            return@setNavigationItemSelectedListener true
+        }
 
         val profileService =
             RetrofitHelper.getProfileInstance().create(QuizzerProfileApi::class.java)
@@ -168,6 +216,11 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    private fun showCredits(view: ConstraintLayout) {
+        val popUpClass = PopUpClass()
+        popUpClass.showPopupWindow(view)
+    }
+
     private fun updateUsername(firstName: String, lastName: String) {
         val updateRequest = UsernameUpdateModel(firstName, lastName)
         profileViewModel.updateUsername(token, updateRequest)
@@ -270,4 +323,6 @@ class HomeActivity : AppCompatActivity() {
     fun isMediaDocument(uri: Uri): Boolean {
         return "com.android.providers.media.documents" == uri.authority
     }
+
+
 }
