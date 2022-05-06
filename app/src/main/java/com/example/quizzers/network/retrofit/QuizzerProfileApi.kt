@@ -34,5 +34,10 @@ interface QuizzerProfileApi {
         @Part filePart: MultipartBody.Part,
     ): Response<PicUploadResponse>
 
+    @GET("accounts/leaderboard")
+    suspend fun getLeaderboard(
+        @Header("Authorization") token: String,
+    ): Response<LeaderboardResponseModel>
+
 
 }

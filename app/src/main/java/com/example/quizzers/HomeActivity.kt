@@ -1,6 +1,7 @@
 package com.example.quizzers
 
 import android.animation.ValueAnimator
+import android.app.Dialog
 import android.content.*
 import android.database.Cursor
 import android.net.Uri
@@ -10,6 +11,7 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.widget.Toast
@@ -22,9 +24,12 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.quizzers.databinding.ActivityHomeBinding
 import com.example.quizzers.databinding.EditUsernameDialogBinding
+import com.example.quizzers.databinding.LeaderboardDialogLayoutBinding
 import com.example.quizzers.network.models.UsernameUpdateModel
 import com.example.quizzers.network.retrofit.QuizzerApi
 import com.example.quizzers.network.retrofit.QuizzerProfileApi
@@ -35,6 +40,7 @@ import com.example.quizzers.viewModels.ProfileViewModel
 import com.example.quizzers.viewModels.ProfileViewModelFactory
 import com.example.quizzers.viewModels.QuizViewModel
 import com.example.quizzers.viewModels.ViewModelFactory
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -87,6 +93,7 @@ class HomeActivity : AppCompatActivity() {
             when (it.itemId) {
                 R.id.nav_leaderboard -> {
                     Toast.makeText(this, "LeaderBoard", Toast.LENGTH_SHORT).show()
+                    showLeaderboard()
                 }
                 R.id.nav_category -> {
 
@@ -214,6 +221,33 @@ class HomeActivity : AppCompatActivity() {
         binding.uploadPicBtn.setOnClickListener {
             pickFile()
         }
+    }
+
+    private fun showLeaderboard() {
+        profileViewModel.getLeaderboard(token)
+        profileViewModel.leaderboardResponse.observe(this, Observer {
+            val lbBinding: LeaderboardDialogLayoutBinding = LeaderboardDialogLayoutBinding.inflate(
+                LayoutInflater.from(this))
+            val adapter = LeaderboardRVAdapter()
+            adapter.list = it
+            lbBinding.recyclerView.layoutManager =
+                LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+            lbBinding.recyclerView.adapter = adapter
+
+            val dialog = AlertDialog.Builder(this)
+                .setView(lbBinding.root)
+                .setNegativeButton("Close") { dialog, which -> dialog.dismiss() }
+
+//            val dialog = Dialog(this)
+//            dialog.setContentView(lbBinding.root)
+//            val rv=dialog.findViewById<RecyclerView>(R.id.recyclerView)
+//            rv.adapter=adapter
+//            dialog.set("Close") { dialog, which -> dialog.dismiss() }
+
+
+            Log.d(TAG, "showLeaderboard: ${it[0].id}")
+            dialog.show()
+        })
     }
 
     private fun showCredits(view: ConstraintLayout) {

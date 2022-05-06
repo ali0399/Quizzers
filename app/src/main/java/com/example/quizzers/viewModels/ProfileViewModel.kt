@@ -66,6 +66,13 @@ class ProfileViewModel(
         }
     }
 
+    fun getLeaderboard(token: String) {
+        Log.d(TAG, "getLeaderboard: start")
+        viewModelScope.launch {
+            repository.getLeaderboard(token)
+        }
+    }
+
 
 //    fun createUser(requestBody:Any){
 //        Log.d(TAG, "createUser: start")
@@ -84,5 +91,7 @@ class ProfileViewModel(
         get() = repository.profileResponse
     val usernameUpdateResponse: LiveData<UsernameUpdateModel>
         get() = repository.usernameUpdateResponse
+    val leaderboardResponse: LiveData<LeaderboardResponseModel>
+        get() = repository.leaderboardResponse
 
 }

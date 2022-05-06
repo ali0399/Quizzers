@@ -1,5 +1,6 @@
 package com.example.quizzers.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.quizzers.network.models.*
@@ -94,5 +95,25 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
         val result = quizzerProfileApi.uploadProfilePhoto(token, part)
         if (result != null)
             mPicUploadResponse.postValue(result.body())
+    }
+
+    //get leaderboard
+    private val mLeaderboardResponse = MutableLiveData<LeaderboardResponseModel>()
+    val leaderboardResponse: LiveData<LeaderboardResponseModel>
+        get() {
+            return mLeaderboardResponse
+        }
+
+    suspend fun getLeaderboard(token: String) {
+        try {
+            val result = quizzerProfileApi.getLeaderboard(token)
+            if (result != null) {
+                mLeaderboardResponse.postValue(result.body())
+                Log.d("getLeaderboardRepo", "getLeaderboard: ${result.body()}")
+            }
+        } catch (e: Exception) {
+//            val errorBody = LeaderboardResponseModel()
+//            mLeaderboardResponse.postValue(errorBody)
+        }
     }
 }
