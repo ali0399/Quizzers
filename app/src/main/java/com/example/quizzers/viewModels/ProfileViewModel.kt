@@ -73,6 +73,12 @@ class ProfileViewModel(
         }
     }
 
+    fun logout(token: String) {
+        viewModelScope.launch {
+            repository.logout(token)
+        }
+    }
+
 
 //    fun createUser(requestBody:Any){
 //        Log.d(TAG, "createUser: start")

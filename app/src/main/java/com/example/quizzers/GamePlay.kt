@@ -30,7 +30,7 @@ class GamePlay : AppCompatActivity() {
     //    private val mQuizViewModel: QuizViewModel by viewModels()
     private lateinit var profileViewModel: ProfileViewModel
     private var mScore = 0
-    private val timeToAnswer = 11000L
+    private val timeToAnswer = 16000L
     private var correctAttempts = 0
     private val timeLeft = ""
     private val questionToShow = ""

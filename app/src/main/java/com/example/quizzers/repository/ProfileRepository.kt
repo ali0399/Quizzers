@@ -116,4 +116,13 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
 //            mLeaderboardResponse.postValue(errorBody)
         }
     }
+
+    //logout
+    suspend fun logout(token: String) {
+        try {
+            quizzerProfileApi.logout(token)
+        } catch (e: Exception) {
+            Log.d("ProfileRepository", "logout: Error: $e")
+        }
+    }
 }

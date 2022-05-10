@@ -2,6 +2,7 @@ package com.example.quizzers
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -21,6 +22,7 @@ class LeaderboardListAdapter() :
         fun bind(item: LeaderboardResponseModelItem) {
             if (item.userprofile != null)
                 Glide.with(binding.userIV).load(item.userprofile.display_picture)
+                    .placeholder(R.drawable.ic_baseline_person_24)
                     .into(binding.userIV)
 
             binding.usernameTV.text = if (context.getString(R.string.Username,
@@ -32,6 +34,24 @@ class LeaderboardListAdapter() :
 
             binding.userScoreTV.text = item.total_score.toString()
 
+            when (adapterPosition) {
+                0 -> with(binding) {
+                    positionIV.setImageResource(R.drawable.gold_medal)
+                    positionTV.visibility = View.GONE
+                }
+                1 -> with(binding) {
+                    positionIV.setImageResource(R.drawable.silver_medal)
+                    positionTV.visibility = View.GONE
+                }
+                2 -> with(binding) {
+                    positionIV.setImageResource(R.drawable.bronze_medal)
+                    positionTV.visibility = View.GONE
+                }
+                else -> with(binding) {
+                    positionIV.visibility = View.INVISIBLE
+                    positionTV.text = (adapterPosition + 1).toString()
+                }
+            }
         }
     }
 

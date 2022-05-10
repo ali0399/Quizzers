@@ -10,7 +10,8 @@
     <item
         android:id="@+id/nav_category"
         android:icon="@drawable/ic_baseline_category_24"
-        android:title="Select Category" />
+        android:actionLayout="@layout/category_dialog_layout"
+        android:title="" />
 
     <item
         android:id="@+id/nav_logout"

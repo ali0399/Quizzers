@@ -8,20 +8,31 @@
     tools:context=".LoginActivity">
 
 
+    <ImageView
+        android:id="@+id/logoIV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="168dp"
+        android:adjustViewBounds="true"
+        android:maxHeight="300dp"
+        android:src="@drawable/quizerz_logo"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="20dp" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/usernameEt"
         style="@style/Style.EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
         android:background="@color/transparent"
         android:hint="Username"
         android:textColorHint="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@+id/passwordEt"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -34,16 +45,15 @@
         style="@style/Style.EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="50dp"
         android:hint="Password"
-        app:passwordToggleEnabled="true"
-        app:passwordToggleTint="@android:color/white"
         android:textColorHint="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@+id/loginBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/usernameEt">
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="@android:color/white">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -54,23 +64,26 @@
 
     <Button
         android:id="@+id/loginBtn"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_margin="42dp"
         android:text="@string/login"
-        app:layout_constraintTop_toBottomOf="@id/passwordEt" />
+        app:layout_constraintBottom_toTopOf="@id/switchLoginView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <Button
         android:id="@+id/switchLoginView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="32dp"
         android:background="@android:color/transparent"
         android:text="@string/switch_to_new_user"
         android:textAllCaps="false"
         android:textSize="12sp"
-        app:layout_constraintTop_toBottomOf="@id/loginBtn" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

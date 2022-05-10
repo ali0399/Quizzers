@@ -1,7 +1,6 @@
 package com.example.quizzers
 
 import android.animation.ValueAnimator
-import android.app.Dialog
 import android.content.*
 import android.database.Cursor
 import android.net.Uri
@@ -14,6 +13,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
@@ -25,11 +27,12 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.quizzers.databinding.ActivityHomeBinding
 import com.example.quizzers.databinding.EditUsernameDialogBinding
 import com.example.quizzers.databinding.LeaderboardDialogLayoutBinding
+import com.example.quizzers.network.CATEGORY_JSON_STRING
+import com.example.quizzers.network.models.CategoryObjectList
 import com.example.quizzers.network.models.UsernameUpdateModel
 import com.example.quizzers.network.retrofit.QuizzerApi
 import com.example.quizzers.network.retrofit.QuizzerProfileApi
@@ -40,7 +43,6 @@ import com.example.quizzers.viewModels.ProfileViewModel
 import com.example.quizzers.viewModels.ProfileViewModelFactory
 import com.example.quizzers.viewModels.QuizViewModel
 import com.example.quizzers.viewModels.ViewModelFactory
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -53,8 +55,11 @@ import java.net.URISyntaxException
 // Request code for selecting a PDF document.
 const val PICK_PDF_FILE = 2
 const val QUIZ_DATA = "QuizData"
+const val LOGGED_IN = "LoggedIn"
+const val TOKEN = "Token"
+const val PERMISSION_REQ_CODE = 123
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var profileViewModel: ProfileViewModel
     private lateinit var quizViewModel: QuizViewModel
     private lateinit var prefs: SharedPreferences
@@ -63,6 +68,7 @@ class HomeActivity : AppCompatActivity() {
     private var userLastName = "LastName"
     private val TAG = "HomeActivity"
     private lateinit var token: String
+    private lateinit var categoryJson: CategoryObjectList
 
     //Variables
     lateinit var drawerLayout: DrawerLayout
@@ -89,6 +95,7 @@ class HomeActivity : AppCompatActivity() {
             R.string.navDrawerClose)
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
+
         navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_leaderboard -> {
@@ -96,11 +103,11 @@ class HomeActivity : AppCompatActivity() {
                     showLeaderboard()
                 }
                 R.id.nav_category -> {
-
+//                    showCategoryDialog()
                     Toast.makeText(this, "nav_category", Toast.LENGTH_SHORT).show()
                 }
                 R.id.nav_logout -> {
-
+                    logout()
                     Toast.makeText(this, "nav_logout", Toast.LENGTH_SHORT).show()
                 }
                 R.id.nav_about -> {
@@ -112,18 +119,19 @@ class HomeActivity : AppCompatActivity() {
             return@setNavigationItemSelectedListener true
         }
 
+        categoryJson = Gson().fromJson(CATEGORY_JSON_STRING, CategoryObjectList::class.java)
+
+
         val profileService =
             RetrofitHelper.getProfileInstance().create(QuizzerProfileApi::class.java)
         val profileRepository = ProfileRepository(profileService)
         profileViewModel = ViewModelProvider(this,
             ProfileViewModelFactory(profileRepository)).get(ProfileViewModel::class.java)
 
-
-
         prefs = getSharedPreferences("QuizerPrefs", MODE_PRIVATE)
-        token = prefs.getString("Token", "")!!
+        token = prefs.getString(TOKEN, "")!!
 
-        val loggedIn = prefs.getBoolean("LoggedIn", false)
+        val loggedIn = prefs.getBoolean(LOGGED_IN, false)
         if (!loggedIn) {
             Log.d(TAG, "onCreate: not logged in")
             startActivity(Intent(this, LoginActivity::class.java))
@@ -135,14 +143,19 @@ class HomeActivity : AppCompatActivity() {
             if (it != null && it?.id != "") {
                 userFirstName = if (it.first_name.equals(" ")) "Quiz" else it.first_name
                 userLastName = if (it.last_name == "") "Master" else it.last_name
-                //todo fix blank name
                 binding.usernameTv.text = if (getString(R.string.Username,
                         it.first_name,
                         it.last_name) == " "
                 ) "Quiz Master" else getString(R.string.Username, it.first_name, it.last_name)
                 it.userprofile?.let {
-                    Log.d(TAG, "onCreate: null userProfile: ${it}")
-                    Glide.with(this).load(it.display_picture).into(binding.profileIv)
+                    try {
+                        Log.d(TAG, "onCreate: null userProfile: ${it}")
+                        Glide.with(this).load(it.display_picture)
+                            .placeholder(R.drawable.ic_baseline_person_24).into(binding.profileIv)
+                    } catch (e: Exception) {
+                        Log.d(TAG, "onCreate: userProfile Pic execption: $e")
+                    }
+
                 }
 
                 ValueAnimator.ofInt(0, it.total_score).apply {
@@ -171,14 +184,15 @@ class HomeActivity : AppCompatActivity() {
 
             }
         })
+        val quizService = RetrofitHelper.getQuizInstance().create(QuizzerApi::class.java)
+        val repository = QuizzerRepository(quizService)
+        quizViewModel =
+            ViewModelProvider(this, ViewModelFactory(repository)).get(QuizViewModel::class.java)
 
         binding.startQuizBtn.setOnClickListener {
             binding.progressBar.visibility = View.VISIBLE
-            val quizService = RetrofitHelper.getQuizInstance().create(QuizzerApi::class.java)
-            val repository = QuizzerRepository(quizService)
-            quizViewModel =
-                ViewModelProvider(this, ViewModelFactory(repository)).get(QuizViewModel::class.java)
 
+            quizViewModel.getQuiz()
             quizViewModel.errorMsg.observe(this, Observer {
                 when (it) {
                     "" -> binding.progressBar.visibility = View.VISIBLE
@@ -221,15 +235,58 @@ class HomeActivity : AppCompatActivity() {
         binding.uploadPicBtn.setOnClickListener {
             pickFile()
         }
+        //category
+        val cats = resources.getStringArray(R.array.categories)
+        binding.catSpinner.onItemSelectedListener = this
+        val ad = ArrayAdapter<String>(this,
+            android.R.layout.simple_spinner_item, cats)
+
+        ad.setDropDownViewResource(R.layout.category_spinner_layout)
+        binding.catSpinner.adapter = ad
+
+        getPermissions()
+    }
+
+    private fun getPermissions() {
+        requestPermissions(arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
+            PERMISSION_REQ_CODE)
+
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
+    ) {
+        when (requestCode) {
+            PERMISSION_REQ_CODE -> Toast.makeText(this,
+                "Thank You for the Permission",
+                Toast.LENGTH_SHORT).show()
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
+    private fun logout() {
+        profileViewModel.logout(token)
+        prefs.edit().apply {
+            putBoolean(LOGGED_IN, false)
+            putString(TOKEN, "")
+        }
+        Log.d(TAG, "logout:LoggedOut")
+        startActivity(Intent(this, LoginActivity::class.java))
+        finish()
     }
 
     private fun showLeaderboard() {
         profileViewModel.getLeaderboard(token)
         profileViewModel.leaderboardResponse.observe(this, Observer {
-            val lbBinding: LeaderboardDialogLayoutBinding = LeaderboardDialogLayoutBinding.inflate(
-                LayoutInflater.from(this))
-            val adapter = LeaderboardRVAdapter()
-            adapter.list = it
+            val lbBinding: LeaderboardDialogLayoutBinding =
+                LeaderboardDialogLayoutBinding.inflate(
+                    LayoutInflater.from(this))
+//                val adapter = LeaderboardRVAdapter()
+//                adapter.list = it
+            val adapter = LeaderboardListAdapter()
+            adapter.submitList(it)
             lbBinding.recyclerView.layoutManager =
                 LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
             lbBinding.recyclerView.adapter = adapter
@@ -358,5 +415,18 @@ class HomeActivity : AppCompatActivity() {
         return "com.android.providers.media.documents" == uri.authority
     }
 
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        setCategory(position)
+        Log.d(TAG, "onItemSelected:  ${quizViewModel.quizOptions.value}")
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        quizViewModel.quizOptions.value?.set("category", "0")
+        Log.d(TAG, "onNothingSelected:  ${quizViewModel.quizOptions.value}")
+    }
+
+    private fun setCategory(position: Int) {
+        quizViewModel.quizOptions.value?.set("category", "${position + 9}")
+    }
 
 }

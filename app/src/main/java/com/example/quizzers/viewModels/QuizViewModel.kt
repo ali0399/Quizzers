@@ -17,11 +17,18 @@ class QuizViewModel(private val repository: QuizzerRepository) : ViewModel() {
 
     val errorMsg: MutableLiveData<String> = MutableLiveData("")
 
+    val quizOptions: MutableLiveData<MutableMap<String, String>> =
+        MutableLiveData(mutableMapOf("amount" to "10", "category" to "0", "type" to "multiple"))
+
     init {
         Log.d("QuizViewModel", "init: start")
+
+    }
+
+    fun getQuiz() {
         viewModelScope.launch {
             try {
-                repository.getQuestions(mapOf("amount" to "10", "type" to "multiple"))
+                repository.getQuestions(quizOptions.value!!)
             } catch (exp: Exception) {
                 errorMsg.value = exp.toString()
             }

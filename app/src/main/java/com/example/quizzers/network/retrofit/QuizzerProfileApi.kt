@@ -39,5 +39,8 @@ interface QuizzerProfileApi {
         @Header("Authorization") token: String,
     ): Response<LeaderboardResponseModel>
 
+    @POST("accounts/logout")
+    suspend fun logout(@Header("Authorization") token: String)
+
 
 }
