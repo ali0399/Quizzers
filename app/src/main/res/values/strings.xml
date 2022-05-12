@@ -11,6 +11,7 @@
     <string name="navDrawerOpen">Drawer Open</string>
     <string name="navDrawerClose">Drawer Close</string>
     <string-array name="categories">
+        <item>Mixed Bag</item>
         <item>General Knowledge</item>
         <item>Entertainment: Books</item>
         <item>Entertainment: Film</item>

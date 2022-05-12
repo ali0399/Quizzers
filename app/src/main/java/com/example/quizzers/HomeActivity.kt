@@ -179,7 +179,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     usernameTv.text = getString(R.string.Username, userFirstName, userLastName)
                     scoreTv.text = "???"
                     profileIv.setImageResource(R.drawable.ic_connection_error)
-//                    startQuizBtn.isEnabled = false
+                    startQuizBtn.isEnabled = false
                 }
 
             }
@@ -191,6 +191,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         binding.startQuizBtn.setOnClickListener {
             binding.progressBar.visibility = View.VISIBLE
+            binding.startQuizBtn.isClickable = false
 
             quizViewModel.getQuiz()
             quizViewModel.errorMsg.observe(this, Observer {
@@ -235,11 +236,11 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         binding.uploadPicBtn.setOnClickListener {
             pickFile()
         }
-        //category
+        //category spinner
         val cats = resources.getStringArray(R.array.categories)
         binding.catSpinner.onItemSelectedListener = this
         val ad = ArrayAdapter<String>(this,
-            android.R.layout.simple_spinner_item, cats)
+            R.layout.category_spinner_collapse, cats)
 
         ad.setDropDownViewResource(R.layout.category_spinner_layout)
         binding.catSpinner.adapter = ad
@@ -426,7 +427,10 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     private fun setCategory(position: Int) {
-        quizViewModel.quizOptions.value?.set("category", "${position + 9}")
+        if (position == 0)
+            quizViewModel.quizOptions.value?.set("category", "0")   //mixed bag
+        else
+            quizViewModel.quizOptions.value?.set("category", "${position + 8}")
     }
 
 }

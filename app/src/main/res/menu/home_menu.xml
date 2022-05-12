@@ -8,12 +8,6 @@
         android:title="Leaderboard" />
 
     <item
-        android:id="@+id/nav_category"
-        android:icon="@drawable/ic_baseline_category_24"
-        android:actionLayout="@layout/category_dialog_layout"
-        android:title="" />
-
-    <item
         android:id="@+id/nav_logout"
         android:icon="@drawable/ic_baseline_logout_24"
         android:title="Logout" />

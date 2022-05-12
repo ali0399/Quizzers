@@ -165,15 +165,18 @@
                     app:layout_constraintTop_toBottomOf="@+id/scoreLabel" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+
             <Spinner
                 android:id="@+id/catSpinner"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginHorizontal="32dp"
+                android:layout_marginEnd="-15dp"
                 android:layout_marginBottom="8dp"
                 android:gravity="center"
                 app:layout_constraintBottom_toTopOf="@+id/startQuizBtn"
+                app:layout_constraintEnd_toEndOf="@+id/startQuizBtn"
+                app:layout_constraintStart_toStartOf="@+id/startQuizBtn"
                 tools:listitem="@android:layout/simple_list_item_activated_1" />
 
             <com.google.android.material.button.MaterialButton
@@ -181,7 +184,6 @@
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/colorScheme6"
-                android:elevation="10dp"
                 android:outlineProvider="paddedBounds"
                 android:padding="16dp"
                 android:text="Start Quiz"
@@ -190,18 +192,21 @@
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.502"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/scoreContainer" />
+                app:layout_constraintTop_toBottomOf="@+id/scoreContainer"
+                app:layout_constraintVertical_bias="0.692" />
 
             <ProgressBar
                 android:id="@+id/progressBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:elevation="5dp"
                 android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/startQuizBtn"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/scoreContainer" />
+                app:layout_constraintBottom_toBottomOf="@id/startQuizBtn"
+                app:layout_constraintEnd_toEndOf="@id/startQuizBtn"
+                app:layout_constraintStart_toStartOf="@id/startQuizBtn"
+                app:layout_constraintTop_toTopOf="@id/startQuizBtn" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

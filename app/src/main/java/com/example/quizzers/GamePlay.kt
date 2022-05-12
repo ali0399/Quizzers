@@ -5,11 +5,15 @@ import android.content.SharedPreferences
 import android.os.*
 import android.text.Html
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
 import android.view.animation.AnimationUtils
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.quizzers.databinding.ActivityGamePlayBinding
@@ -48,7 +52,7 @@ class GamePlay : AppCompatActivity() {
         override fun onFinish() {
             Log.d(TAG, "onFinish: start Qnbr= $qNbr")
             binding.timerTv.text = "0"
-            if (++qNbr < 10) {
+            if (++qNbr < 3) {
                 binding.option1Tv.setBackgroundResource(R.drawable.option_bg)
                 binding.option2Tv.setBackgroundResource(R.drawable.option_bg)
                 binding.option3Tv.setBackgroundResource(R.drawable.option_bg)
@@ -58,12 +62,15 @@ class GamePlay : AppCompatActivity() {
                         questions[qNbr].incorrect_answers))
                 this.start()
             } else {
-                AlertDialog.Builder(this@GamePlay).setTitle("Score").setMessage("$mScore / 10")
+
+                AlertDialog.Builder(this@GamePlay)
+                    .setTitle("Score")
+                    .setMessage("$mScore / 10")
                     .setPositiveButton("OK") { dialog, which ->
+                        binding.scoreUploadProgress.visibility = View.VISIBLE
                         val profileService: QuizzerProfileApi =
                             RetrofitHelper.getProfileInstance()
                                 .create(QuizzerProfileApi::class.java)
-
                         //upload score
                         val profileRepository = ProfileRepository(profileService)
                         profileViewModel = ViewModelProvider(this@GamePlay,
@@ -73,7 +80,8 @@ class GamePlay : AppCompatActivity() {
                         profileViewModel.createScore(token, scoreRequest)
                         profileViewModel.createScoreResponse.observe(this@GamePlay, Observer {
                             Log.d(TAG, "onFinish: create score : $it")
-                            dialog.cancel()
+                            if (it != null)
+                                dialog.cancel()
                         })
 
                     }
@@ -287,7 +295,15 @@ class GamePlay : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        finish()
+        AlertDialog.Builder(this@GamePlay)
+            .setTitle("Exit")
+            .setMessage("Are you sure?")
+            .setPositiveButton("Yes") { dialog, which ->
+                finish()
+            }
+            .setNegativeButton("No") { dialog, which ->
+                dialog.dismiss()
+            }
+            .show()
     }
 }
