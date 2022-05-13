@@ -99,5 +99,7 @@ class ProfileViewModel(
         get() = repository.usernameUpdateResponse
     val leaderboardResponse: LiveData<LeaderboardResponseModel>
         get() = repository.leaderboardResponse
+    val logoutResponseCd: LiveData<String>
+        get() = repository.logoutResponse
 
 }

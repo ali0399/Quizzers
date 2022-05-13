@@ -118,9 +118,19 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
     }
 
     //logout
+
+    private val mLogoutResponse = MutableLiveData<String>()
+    val logoutResponse: LiveData<String>
+        get() {
+            return mLogoutResponse
+        }
+
     suspend fun logout(token: String) {
         try {
-            quizzerProfileApi.logout(token)
+            val result = quizzerProfileApi.logout(token)
+            if (result.code() != 0) {
+                mLogoutResponse.postValue(result.code().toString())
+            }
         } catch (e: Exception) {
             Log.d("ProfileRepository", "logout: Error: $e")
         }

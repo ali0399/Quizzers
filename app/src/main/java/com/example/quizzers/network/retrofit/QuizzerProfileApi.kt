@@ -2,6 +2,7 @@ package com.example.quizzers.network.retrofit
 
 import com.example.quizzers.network.models.*
 import okhttp3.MultipartBody
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -40,7 +41,7 @@ interface QuizzerProfileApi {
     ): Response<LeaderboardResponseModel>
 
     @POST("accounts/logout")
-    suspend fun logout(@Header("Authorization") token: String)
+    suspend fun logout(@Header("Authorization") token: String): Response<Unit>
 
 
 }

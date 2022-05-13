@@ -11,14 +11,14 @@
         android:id="@+id/leaderboardHeaderIV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:scaleType="centerInside"
+        android:adjustViewBounds="false"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@id/recyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/recyclerView"
         app:layout_constraintVertical_chainStyle="packed"
-        app:srcCompat="@drawable/credits_img" />
+        app:srcCompat="@drawable/trophies_bg_recolor" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -26,10 +26,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/leaderboardHeaderIV"
-
         tools:listitem="@layout/leaderboard_item_layout" />
 
 

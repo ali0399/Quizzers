@@ -15,7 +15,6 @@ import android.view.Menu
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
@@ -101,10 +100,6 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 R.id.nav_leaderboard -> {
                     Toast.makeText(this, "LeaderBoard", Toast.LENGTH_SHORT).show()
                     showLeaderboard()
-                }
-                R.id.nav_category -> {
-//                    showCategoryDialog()
-                    Toast.makeText(this, "nav_category", Toast.LENGTH_SHORT).show()
                 }
                 R.id.nav_logout -> {
                     logout()
@@ -269,13 +264,18 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     private fun logout() {
         profileViewModel.logout(token)
-        prefs.edit().apply {
-            putBoolean(LOGGED_IN, false)
-            putString(TOKEN, "")
-        }
-        Log.d(TAG, "logout:LoggedOut")
-        startActivity(Intent(this, LoginActivity::class.java))
-        finish()
+        profileViewModel.logoutResponseCd.observe(this, Observer {
+            if (it != "0") {
+                prefs.edit().apply {
+                    putBoolean(LOGGED_IN, false)
+                    putString(TOKEN, "")
+                }.apply()
+                Log.d(TAG, "logout: code= $it")
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+            } else Toast.makeText(this, "Error logging out: $it", Toast.LENGTH_SHORT).show()
+        })
+
     }
 
     private fun showLeaderboard() {
