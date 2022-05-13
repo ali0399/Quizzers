@@ -136,7 +136,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         profileViewModel.getProfileDetail(token)
         profileViewModel.profileDetails.observe(this, Observer {
             if (it != null && it?.id != "") {
-                userFirstName = if (it.first_name.equals(" ")) "Quiz" else it.first_name
+                userFirstName = if (it.first_name == ("")) "Quiz" else it.first_name
                 userLastName = if (it.last_name == "") "Master" else it.last_name
                 binding.usernameTv.text = if (getString(R.string.Username,
                         it.first_name,
@@ -233,11 +233,14 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         }
         //category spinner
         val cats = resources.getStringArray(R.array.categories)
-        binding.catSpinner.onItemSelectedListener = this
+        with(binding.catSpinner) {
+            onItemSelectedListener = this@HomeActivity
+            setPopupBackgroundDrawable(getDrawable(R.drawable.btn_round_bg))
+        }
         val ad = ArrayAdapter<String>(this,
             R.layout.category_spinner_collapse, cats)
 
-        ad.setDropDownViewResource(R.layout.category_spinner_layout)
+        ad.setDropDownViewResource(R.layout.spinner_item_layout)
         binding.catSpinner.adapter = ad
 
         getPermissions()
