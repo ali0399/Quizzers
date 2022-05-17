@@ -14,7 +14,6 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
@@ -25,12 +24,15 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.quizzers.databinding.ActivityHomeBinding
+import com.example.quizzers.databinding.CategoryDialogLayoutBinding
 import com.example.quizzers.databinding.EditUsernameDialogBinding
 import com.example.quizzers.databinding.LeaderboardDialogLayoutBinding
 import com.example.quizzers.network.CATEGORY_JSON_STRING
+import com.example.quizzers.network.catgList
 import com.example.quizzers.network.models.CategoryObjectList
 import com.example.quizzers.network.models.UsernameUpdateModel
 import com.example.quizzers.network.retrofit.QuizzerApi
@@ -52,11 +54,13 @@ import java.net.URISyntaxException
 
 
 // Request code for selecting a PDF document.
+
 const val PICK_PDF_FILE = 2
 const val QUIZ_DATA = "QuizData"
 const val LOGGED_IN = "LoggedIn"
 const val TOKEN = "Token"
 const val PERMISSION_REQ_CODE = 123
+private const val TAG = "HomeActivity"
 
 class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var profileViewModel: ProfileViewModel
@@ -65,7 +69,6 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var binding: ActivityHomeBinding
     private var userFirstName = "FirstName"
     private var userLastName = "LastName"
-    private val TAG = "HomeActivity"
     private lateinit var token: String
     private lateinit var categoryJson: CategoryObjectList
 
@@ -135,7 +138,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         Log.d(TAG, "onCreate: logged in")
         profileViewModel.getProfileDetail(token)
         profileViewModel.profileDetails.observe(this, Observer {
-            if (it != null && it?.id != "") {
+            if (it != null && it.id != "") {
                 userFirstName = if (it.first_name == ("")) "Quiz" else it.first_name
                 userLastName = if (it.last_name == "") "Master" else it.last_name
                 binding.usernameTv.text = if (getString(R.string.Username,
@@ -185,30 +188,9 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             ViewModelProvider(this, ViewModelFactory(repository)).get(QuizViewModel::class.java)
 
         binding.startQuizBtn.setOnClickListener {
-            binding.progressBar.visibility = View.VISIBLE
-            binding.startQuizBtn.isClickable = false
 
-            quizViewModel.getQuiz()
-            quizViewModel.errorMsg.observe(this, Observer {
-                when (it) {
-                    "" -> binding.progressBar.visibility = View.VISIBLE
-                    else -> {//we can add more case specific responses here
-                        binding.progressBar.visibility = View.GONE
-                        Toast.makeText(this,
-                            "Network Error: $it",
-                            Toast.LENGTH_SHORT).show()
-                    }
-                }
-            })
+            showCategoryDialog()
 
-            quizViewModel.quiz.observe(this, Observer {
-                if (it != null) {
-                    binding.progressBar.visibility = View.GONE
-                    startActivity(Intent(this,
-                        GamePlay::class.java).putExtra(QUIZ_DATA, Gson().toJson(it)))
-                    finish()
-                }
-            })
 
         }
 
@@ -232,19 +214,20 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             pickFile()
         }
         //category spinner
-        val cats = resources.getStringArray(R.array.categories)
-        with(binding.catSpinner) {
-            onItemSelectedListener = this@HomeActivity
-            setPopupBackgroundDrawable(getDrawable(R.drawable.btn_round_bg))
-        }
-        val ad = ArrayAdapter<String>(this,
-            R.layout.category_spinner_collapse, cats)
-
-        ad.setDropDownViewResource(R.layout.spinner_item_layout)
-        binding.catSpinner.adapter = ad
+//        val cats = resources.getStringArray(R.array.categories)
+//        with(binding.catSpinner) {
+//            onItemSelectedListener = this@HomeActivity
+//            setPopupBackgroundDrawable(getDrawable(R.drawable.btn_round_bg))
+//        }
+//        val ad = ArrayAdapter<String>(this,
+//            R.layout.category_spinner_collapse, cats)
+//
+//        ad.setDropDownViewResource(R.layout.spinner_item_layout)
+//        binding.catSpinner.adapter = ada
 
         getPermissions()
     }
+
 
     private fun getPermissions() {
         requestPermissions(arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
@@ -279,6 +262,58 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             } else Toast.makeText(this, "Error logging out: $it", Toast.LENGTH_SHORT).show()
         })
 
+    }
+
+    private fun showCategoryDialog() {
+        val dialog = AlertDialog.Builder(this)
+
+        val catgBinding: CategoryDialogLayoutBinding = CategoryDialogLayoutBinding.inflate(
+            LayoutInflater.from(this))
+
+        val d = dialog.setView(catgBinding.root)
+            .setNegativeButton("Cancel") { dia, _ ->
+                dia.dismiss()
+            }
+            .setTitle("Choose Category")
+            .show()
+
+        val adapter = CategoryListAdapter(d) { it ->
+            Log.d(TAG, "showCategoryDialog: $it")
+            binding.progressBar.visibility = View.VISIBLE
+            catgBinding.catgRV.isClickable = false
+//            d.cancel()
+            if (it == 0)
+                quizViewModel.quizOptions.value?.set("category", "0")   //mixed bag
+            else
+                quizViewModel.quizOptions.value?.set("category", "${it + 8}")
+
+            quizViewModel.getQuiz()
+            quizViewModel.errorMsg.observe(this, Observer {
+                when (it) {
+                    "" -> binding.progressBar.visibility = View.VISIBLE
+                    else -> {//we can add more case specific responses here
+                        binding.progressBar.visibility = View.GONE
+                        Toast.makeText(this,
+                            "Network Error: $it",
+                            Toast.LENGTH_SHORT).show()
+                    }
+                }
+            })
+
+            quizViewModel.quiz.observe(this, Observer {
+                if (it != null) {
+                    binding.progressBar.visibility = View.GONE
+                    startActivity(Intent(this,
+                        GamePlay::class.java).putExtra(QUIZ_DATA, Gson().toJson(it)))
+                    finish()
+                }
+            })
+        }
+
+        catgBinding.catgRV.layoutManager =
+            GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false)
+        adapter.submitList(catgList)
+        catgBinding.catgRV.adapter = adapter
     }
 
     private fun showLeaderboard() {
@@ -356,7 +391,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         var selectionArgs: Array<String>? = null
         // Uri is different in versions after KITKAT (Android 4.4), we need to
         if (uri != null) {
-            if (Build.VERSION.SDK_INT >= 19 && DocumentsContract.isDocumentUri(context.getApplicationContext(),
+            if (Build.VERSION.SDK_INT >= 19 && DocumentsContract.isDocumentUri(context.applicationContext,
                     uri)
             ) {
                 if (isExternalStorageDocument(uri)) {
@@ -391,7 +426,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 )
                 var cursor: Cursor? = null
                 try {
-                    cursor = context.getContentResolver()
+                    cursor = context.contentResolver
                         .query(uri, projection, selection, selectionArgs, null)
                     val column_index: Int =
                         cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)

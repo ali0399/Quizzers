@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Spinner xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/catSpinner"
     android:padding="4dp"
+    android:layout_height="match_parent"
     android:popupBackground="@drawable/btn_round_bg"
     android:spinnerMode="dropdown"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:gravity="center"
     android:layout_gravity="center"
-    android:gravity="center" />
+    android:orientation="vertical">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/catgRV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2"
+        tools:listitem="@layout/category_item_layout" />
+</LinearLayout>
