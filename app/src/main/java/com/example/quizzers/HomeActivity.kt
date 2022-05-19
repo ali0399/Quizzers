@@ -19,7 +19,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.cardview.widget.CardView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
@@ -111,7 +111,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     Toast.makeText(this, "nav_logout", Toast.LENGTH_SHORT).show()
                 }
                 R.id.nav_about -> {
-                    showCredits(findViewById<ConstraintLayout>(R.id.scoreContainer))
+                    showCredits(findViewById(R.id.scoreContainer))
                 }
 
             }
@@ -141,6 +141,8 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         profileViewModel.getProfileDetail(token)
         profileViewModel.profileDetails.observe(this, Observer {
             if (it != null && it.id != "") {
+                drawerLayout.findViewById<MaterialTextView>(R.id.headerUsernameTV).text =
+                    it.email
                 userFirstName = if (it.first_name == ("")) "Quiz" else it.first_name
                 userLastName = if (it.last_name == "") "Master" else it.last_name
                 binding.usernameTv.text = if (getString(R.string.Username,
@@ -168,9 +170,6 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     }
                     start()
                 }
-
-                drawerLayout.findViewById<MaterialTextView>(R.id.headerUsernameTV).text =
-                    it.email.toString()
 
 
             } else {
@@ -357,7 +356,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         })
     }
 
-    private fun showCredits(view: ConstraintLayout) {
+    private fun showCredits(view: CardView) {
         val popUpClass = PopUpClass()
         popUpClass.showPopupWindow(view)
     }
