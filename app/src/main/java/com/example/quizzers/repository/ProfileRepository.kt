@@ -17,7 +17,7 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
 
     suspend fun createUser(body: CreateUserRequestModel) {
         val result = quizzerProfileApi.createUser(body)
-        if (result != null) {
+        if (result != null && result.isSuccessful) {
             //todo handle error messages
             mCreateUserResponse.postValue(result.body())
         }

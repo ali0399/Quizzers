@@ -2,9 +2,9 @@ package com.example.quizzers
 
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.quizzers.databinding.ActivityLoginBinding
@@ -87,8 +87,8 @@ class LoginActivity : AppCompatActivity() {
         profileViewModel.createUser(createUserRequestBody)
 
         profileViewModel.createUserResponse.observe(this, Observer {
-            Log.d(TAG, "createUser response: ${it}")
-            if (it.token != null) {
+            Log.d(TAG, "createUser response: $it")
+            if (it != null) {
                 with(prefs.edit()) {
                     putString("Token", "Token " + it.token).apply()
                     putBoolean("LoggedIn", true).apply()

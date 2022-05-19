@@ -40,11 +40,13 @@ import com.example.quizzers.network.retrofit.QuizzerProfileApi
 import com.example.quizzers.network.retrofit.RetrofitHelper
 import com.example.quizzers.repository.ProfileRepository
 import com.example.quizzers.repository.QuizzerRepository
+import com.example.quizzers.repository.Response
 import com.example.quizzers.viewModels.ProfileViewModel
 import com.example.quizzers.viewModels.ProfileViewModelFactory
 import com.example.quizzers.viewModels.QuizViewModel
 import com.example.quizzers.viewModels.ViewModelFactory
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.textview.MaterialTextView
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -167,6 +169,9 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     start()
                 }
 
+                drawerLayout.findViewById<MaterialTextView>(R.id.headerUsernameTV).text =
+                    it.email.toString()
+
 
             } else {
                 Log.d(TAG, "onCreate: Error fetching profile details")
@@ -188,9 +193,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             ViewModelProvider(this, ViewModelFactory(repository)).get(QuizViewModel::class.java)
 
         binding.startQuizBtn.setOnClickListener {
-
             showCategoryDialog()
-
 
         }
 
@@ -277,44 +280,51 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             .setTitle("Choose Category")
             .show()
 
-        val adapter = CategoryListAdapter { it ->
-            Log.d(TAG, "showCategoryDialog: $it")
+        val adapter = CategoryListAdapter { position ->
+            Log.d(TAG, "showCategoryDialog: $position")
             binding.progressBar.visibility = View.VISIBLE
             catgBinding.catgRV.isClickable = false
             dialog.cancel()
 
-
-            if (it == 0)
+            if (position == 0)
                 quizViewModel.quizOptions.value?.set("category", "0")   //mixed bag
             else
-                quizViewModel.quizOptions.value?.set("category", "${it + 8}")
+                quizViewModel.quizOptions.value?.set("category", "${position + 8}")
 
-            quizViewModel.getQuiz()
-            quizViewModel.errorMsg.observe(this, Observer {
-                when (it) {
-                    "" -> binding.progressBar.visibility = View.VISIBLE
-                    else -> {//we can add more case specific responses here
-                        binding.progressBar.visibility = View.GONE
-                        Toast.makeText(this,
-                            "Network Error: $it",
-                            Toast.LENGTH_SHORT).show()
-                    }
-                }
-            })
-
-            quizViewModel.quiz.observe(this, Observer {
-                if (it != null) {
-                    binding.progressBar.visibility = View.GONE
-                    startActivity(Intent(this,
-                        GamePlay::class.java).putExtra(QUIZ_DATA, Gson().toJson(it)))
-                    finish()
-                }
-            })
+            getQuestions()
         }
+
         catgBinding.catgRV.layoutManager =
             GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false)
         adapter.submitList(catgList)
         catgBinding.catgRV.adapter = adapter
+    }
+
+    private fun getQuestions() {
+        quizViewModel.getQuiz()
+
+        quizViewModel.quiz.observe(this, Observer {
+            when (it) {
+                is Response.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+                is Response.Success -> {
+                    if (it.data != null) {
+                        binding.progressBar.visibility = View.GONE
+                        startActivity(Intent(this,
+                            GamePlay::class.java).putExtra(QUIZ_DATA, Gson().toJson(it.data)))
+                        finish()
+                    }
+
+                }
+                is Response.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(this,
+                        "Network Error: ${it.errorMsg}",
+                        Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
     }
 
     private fun showLeaderboard() {

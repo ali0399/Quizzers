@@ -2,19 +2,19 @@ package com.example.quizzers.viewModels
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizzers.network.models.*
 import com.example.quizzers.repository.ProfileRepository
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
-import retrofit2.http.Body
-import retrofit2.http.Multipart
 
 class ProfileViewModel(
     private val repository: ProfileRepository
 ) : ViewModel() {
     private val TAG = "ProfileViewModel"
+    val errorMsg: MutableLiveData<String> = MutableLiveData("")
 
     init {
         Log.d(TAG, "init: start")

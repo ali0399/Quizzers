@@ -21,7 +21,6 @@ class CategoryListAdapter(private val onClicked: (Int) -> Unit) :
             var uri = "@drawable/catg_img" // where myresource (without the extension) is the file
             var catId = String.format("%02d", adapterPosition)
             uri += catId
-
             val imageResource: Int = context.resources.getIdentifier(uri, null, context.packageName)
             binding.categoryIcon.setImageResource(imageResource)
 
@@ -35,6 +34,7 @@ class CategoryListAdapter(private val onClicked: (Int) -> Unit) :
         viewHolder.itemView.setOnClickListener {
             val position = viewHolder.adapterPosition
             onClicked(position)
+            it.setBackgroundColor(viewHolder.context.getColor(R.color.colorScheme3))
         }
 
         return viewHolder

@@ -1,5 +1,6 @@
-package com.example.quizzers
 
+package com.example.quizzers
+/*
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
@@ -164,3 +165,4 @@ class GamePlayCompose : ComponentActivity() {
         }
     }
 }
+*/
