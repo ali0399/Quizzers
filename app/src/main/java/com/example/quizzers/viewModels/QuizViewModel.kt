@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizzers.network.models.TbdResponseModel
 import com.example.quizzers.repository.QuizzerRepository
-import com.example.quizzers.repository.Response
+import com.example.quizzers.repository.SafeResponse
 import kotlinx.coroutines.launch
 
 class QuizViewModel(private val repository: QuizzerRepository) : ViewModel() {
@@ -32,7 +32,7 @@ class QuizViewModel(private val repository: QuizzerRepository) : ViewModel() {
         }
     }
 
-    val quiz: LiveData<Response<TbdResponseModel>>
+    val quiz: LiveData<SafeResponse<TbdResponseModel>>
         get() = repository.questions
 
 }

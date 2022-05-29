@@ -209,4 +209,19 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/pageLoaderCard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardBackgroundColor="@color/colorAlpha1">
+
+        <ProgressBar
+            android:id="@+id/pageLoaderBar"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_margin="20dp"
+            android:indeterminateTint="@color/colorScheme2" />
+    </androidx.cardview.widget.CardView>
+
 </androidx.drawerlayout.widget.DrawerLayout>

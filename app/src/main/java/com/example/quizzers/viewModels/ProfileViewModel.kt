@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizzers.network.models.*
 import com.example.quizzers.repository.ProfileRepository
+import com.example.quizzers.repository.SafeResponse
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 
@@ -93,7 +94,7 @@ class ProfileViewModel(
         get() = repository.loginResponse
     val createScoreResponse: LiveData<CreateScoreResponseModel>
         get() = repository.scoreResponse
-    val profileDetails: LiveData<ProfileDetailResponseModel>
+    val profileDetails: LiveData<SafeResponse<ProfileDetailResponseModel>>
         get() = repository.profileResponse
     val usernameUpdateResponse: LiveData<UsernameUpdateModel>
         get() = repository.usernameUpdateResponse

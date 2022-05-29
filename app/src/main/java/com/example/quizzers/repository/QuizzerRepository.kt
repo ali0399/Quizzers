@@ -5,22 +5,23 @@ import com.example.quizzers.network.models.TbdResponseModel
 import com.example.quizzers.network.retrofit.QuizzerApi
 
 class QuizzerRepository(private val quizzerApi: QuizzerApi) {
-    private val mQuestions = MutableLiveData<Response<TbdResponseModel>>()
+    private val mQuestions = MutableLiveData<SafeResponse<TbdResponseModel>>()
 
-    val questions: MutableLiveData<Response<TbdResponseModel>>
+    val questions: MutableLiveData<SafeResponse<TbdResponseModel>>
         get() = mQuestions
 
     suspend fun getQuestions(options: Map<String, String>) {
+        mQuestions.postValue(SafeResponse.Loading())
         try {
             val result = quizzerApi.getQuiz(options)
             if (result.body() != null) {
                 if (result.body()!!.response_code == 0) {
-                    mQuestions.postValue(Response.Success(result.body()))
-                } else mQuestions.postValue(Response.Error("OpenTDB: ResponseCode= ${result.body()!!.response_code} "))
+                    mQuestions.postValue(SafeResponse.Success(result.body()))
+                } else mQuestions.postValue(SafeResponse.Error("OpenTDB: ResponseCode= ${result.body()!!.response_code} "))
             }
 
         } catch (e: Exception) {
-            mQuestions.postValue(Response.Error(e.message.toString()))
+            mQuestions.postValue(SafeResponse.Error(e.message.toString()))
         }
 
     }

@@ -13,10 +13,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="168dp"
         android:adjustViewBounds="true"
         android:maxHeight="300dp"
         android:src="@drawable/quizerz_logo"
+        app:layout_constraintBottom_toTopOf="@+id/usernameEt"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="20dp" />
 
@@ -27,9 +27,8 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"
-        android:background="@color/transparent"
+        android:padding="2dp"
         android:hint="Username"
-        android:textColorHint="@android:color/white"
         app:layout_constraintBottom_toTopOf="@+id/passwordEt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -47,13 +46,12 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="50dp"
+        android:padding="2dp"
         android:hint="Password"
-        android:textColorHint="@android:color/white"
         app:layout_constraintBottom_toTopOf="@+id/loginBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:passwordToggleEnabled="true"
-        app:passwordToggleTint="@android:color/white">
+        app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"

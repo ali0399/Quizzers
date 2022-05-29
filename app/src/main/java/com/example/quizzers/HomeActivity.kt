@@ -40,7 +40,7 @@ import com.example.quizzers.network.retrofit.QuizzerProfileApi
 import com.example.quizzers.network.retrofit.RetrofitHelper
 import com.example.quizzers.repository.ProfileRepository
 import com.example.quizzers.repository.QuizzerRepository
-import com.example.quizzers.repository.Response
+import com.example.quizzers.repository.SafeResponse
 import com.example.quizzers.viewModels.ProfileViewModel
 import com.example.quizzers.viewModels.ProfileViewModelFactory
 import com.example.quizzers.viewModels.QuizViewModel
@@ -140,51 +140,65 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         Log.d(TAG, "onCreate: logged in")
         profileViewModel.getProfileDetail(token)
         profileViewModel.profileDetails.observe(this, Observer {
-            if (it != null && it.id != "") {
-                drawerLayout.findViewById<MaterialTextView>(R.id.headerUsernameTV).text =
-                    it.email
-                userFirstName = if (it.first_name == ("")) "Quiz" else it.first_name
-                userLastName = if (it.last_name == "") "Master" else it.last_name
-                binding.usernameTv.text = if (getString(R.string.Username,
-                        it.first_name,
-                        it.last_name) == " "
-                ) "Quiz Master" else getString(R.string.Username, it.first_name, it.last_name)
-                it.userprofile?.let {
-                    try {
-                        Log.d(TAG, "onCreate: null userProfile: ${it}")
-                        Glide.with(this).load(it.display_picture)
-                            .placeholder(R.drawable.ic_baseline_person_24).into(binding.profileIv)
-                    } catch (e: Exception) {
-                        Log.d(TAG, "onCreate: userProfile Pic execption: $e")
+            when (it) {
+                is SafeResponse.Success -> {
+                    it.data.run {
+                        if ((this != null) && (this.id != "")) {
+                            binding.pageLoaderCard.visibility = View.GONE
+                            drawerLayout.findViewById<MaterialTextView>(R.id.headerUsernameTV).text =
+                                this.email
+                            userFirstName = if (this.first_name == ("")) "Quiz" else this.first_name
+                            userLastName = if (this.last_name == "") "Master" else this.last_name
+                            binding.usernameTv.text = if (getString(R.string.Username,
+                                    this.first_name,
+                                    this.last_name) == " "
+                            ) "Quiz Master" else getString(R.string.Username,
+                                this.first_name,
+                                this.last_name)
+                            this.userprofile?.let {
+                                try {
+                                    Log.d(TAG, "onCreate: null userProfile: $it")
+                                    Glide.with(this@HomeActivity).load(it.display_picture)
+                                        .placeholder(R.drawable.ic_baseline_person_24)
+                                        .into(binding.profileIv)
+                                } catch (e: Exception) {
+                                    Log.d(TAG, "onCreate: userProfile Pic execption: $e")
+                                }
+                            }
+
+                            ValueAnimator.ofInt(0, this.total_score).apply {
+                                duration = 1500L
+                                addUpdateListener { updatedAnimation ->
+                                    // You can use the animated value in a property that uses the
+                                    // same type as the animation. In this case, you can use the
+                                    // float value in the translationX property.
+                                    binding.scoreTv.text = updatedAnimation.animatedValue.toString()
+                                }
+                                start()
+                            }
+                        }
+                    }
+                }
+                is SafeResponse.Error -> {
+                    Log.d(TAG, "onCreate: Error fetching profile details")
+                    binding.pageLoaderCard.visibility = View.GONE
+                    Toast.makeText(this, "Network Error!", Toast.LENGTH_SHORT).show()
+                    userFirstName = "???"
+                    userLastName = "???"
+                    binding.apply {
+                        usernameTv.text = getString(R.string.Username, userFirstName, userLastName)
+                        scoreTv.text = "???"
+                        profileIv.setImageResource(R.drawable.ic_connection_error)
+                        startQuizBtn.isEnabled = false
                     }
 
                 }
+                is SafeResponse.Loading -> {
+                    binding.pageLoaderCard.visibility = View.VISIBLE
 
-                ValueAnimator.ofInt(0, it.total_score).apply {
-                    duration = 1500L
-                    addUpdateListener { updatedAnimation ->
-                        // You can use the animated value in a property that uses the
-                        // same type as the animation. In this case, you can use the
-                        // float value in the translationX property.
-                        binding.scoreTv.text = updatedAnimation.animatedValue.toString()
-                    }
-                    start()
                 }
-
-
-            } else {
-                Log.d(TAG, "onCreate: Error fetching profile details")
-                Toast.makeText(this, "Network Error!", Toast.LENGTH_SHORT).show()
-                userFirstName = "???"
-                userLastName = "???"
-                binding.apply {
-                    usernameTv.text = getString(R.string.Username, userFirstName, userLastName)
-                    scoreTv.text = "???"
-                    profileIv.setImageResource(R.drawable.ic_connection_error)
-                    startQuizBtn.isEnabled = false
-                }
-
             }
+
         })
         val quizService = RetrofitHelper.getQuizInstance().create(QuizzerApi::class.java)
         val repository = QuizzerRepository(quizService)
@@ -281,7 +295,6 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         val adapter = CategoryListAdapter { position ->
             Log.d(TAG, "showCategoryDialog: $position")
-            binding.progressBar.visibility = View.VISIBLE
             catgBinding.catgRV.isClickable = false
             dialog.cancel()
 
@@ -304,10 +317,10 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         quizViewModel.quiz.observe(this, Observer {
             when (it) {
-                is Response.Loading -> {
+                is SafeResponse.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
                 }
-                is Response.Success -> {
+                is SafeResponse.Success -> {
                     if (it.data != null) {
                         binding.progressBar.visibility = View.GONE
                         startActivity(Intent(this,
@@ -316,7 +329,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     }
 
                 }
-                is Response.Error -> {
+                is SafeResponse.Error -> {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(this,
                         "Network Error: ${it.errorMsg}",

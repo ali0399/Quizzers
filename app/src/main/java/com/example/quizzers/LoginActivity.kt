@@ -55,6 +55,8 @@ class LoginActivity : AppCompatActivity() {
                         login()
                     }
                 }
+                binding.usernameEt.editText!!.text.clear()
+                binding.passwordEt.editText!!.text.clear()
                 binding.usernameEt.hint = "Username"
                 binding.switchLoginView.text = resources.getText(R.string.switch_to_new_user)
             } else {//currentView:Login| change view for new User
@@ -65,6 +67,8 @@ class LoginActivity : AppCompatActivity() {
                         createUser()
                     }
                 }
+                binding.usernameEt.editText!!.text.clear()
+                binding.passwordEt.editText!!.text.clear()
                 binding.usernameEt.hint = "Email Id"
                 binding.switchLoginView.text = resources.getText(R.string.switch_to_login)
             }

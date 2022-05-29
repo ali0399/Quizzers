@@ -32,7 +32,7 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
 
     suspend fun login(body: LoginRequestModel) {
         val result = quizzerProfileApi.login(body)
-        if (result != null) {
+        if (result.body() != null) {
             mLoginResponseModel.postValue(result.body())
         }
     }
@@ -48,26 +48,26 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
         val result =
             quizzerProfileApi.createScore(token,
                 body)
-        if (result != null) {
+        if (result.body() != null) {
             mCreateScoreResponse.postValue(result.body())
         }
     }
 
     //get Profile detail
-    private val mProfileDetailResponse = MutableLiveData<ProfileDetailResponseModel>()
-    val profileResponse: LiveData<ProfileDetailResponseModel>
+    private val mProfileDetailResponse = MutableLiveData<SafeResponse<ProfileDetailResponseModel>>()
+    val profileResponse: LiveData<SafeResponse<ProfileDetailResponseModel>>
         get() {
             return mProfileDetailResponse
         }
 
     suspend fun getProfileDetail(token: String) {
+        mProfileDetailResponse.postValue(SafeResponse.Loading())
         try {
             val result = quizzerProfileApi.getProfileDetails(token)
-            if (result != null)
-                mProfileDetailResponse.postValue(result.body())
+            if (result.body() != null && result.code() == 200)
+                mProfileDetailResponse.postValue(SafeResponse.Success(result.body()))
         } catch (e: Exception) {
-            val errorBody = ProfileDetailResponseModel()
-            mProfileDetailResponse.postValue(errorBody)
+            mProfileDetailResponse.postValue(SafeResponse.Error(e.message.toString()))
         }
     }
 
