@@ -1,17 +1,21 @@
 package com.example.quizzers
 
 import android.content.Context
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.*
+import android.widget.ImageButton
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 
 
 class PopUpClass {
+    private val TAG = "PopUpClass"
     //PopupWindow display method
     fun showPopupWindow(view: View) {
 
-
+        Log.d(TAG, "showPopupWindow: start")
         //Create a View object yourself through inflater
         val inflater =
             view.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -35,8 +39,8 @@ class PopUpClass {
         val buttonEdit = popupView.findViewById<ImageButton>(R.id.cancel_button)
         buttonEdit.setOnClickListener { //As an example, display the message
 //            Toast.makeText(view.context, "Wow, popup action button", Toast.LENGTH_SHORT).show()
+            Log.d(TAG, "showPopupWindow: dismiss")
             popupWindow.dismiss()
         }
-
     }
 }

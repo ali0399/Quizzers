@@ -111,6 +111,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     Toast.makeText(this, "nav_logout", Toast.LENGTH_SHORT).show()
                 }
                 R.id.nav_about -> {
+                    Log.d(TAG, "onCreate: nav_about")
                     showCredits(findViewById(R.id.scoreContainer))
                 }
 
@@ -340,36 +341,38 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     private fun showLeaderboard() {
-        profileViewModel.getLeaderboard(token)
-        profileViewModel.leaderboardResponse.observe(this, Observer {
-            val lbBinding: LeaderboardDialogLayoutBinding =
-                LeaderboardDialogLayoutBinding.inflate(
-                    LayoutInflater.from(this))
+        val lbBinding: LeaderboardDialogLayoutBinding =
+            LeaderboardDialogLayoutBinding.inflate(
+                LayoutInflater.from(this))
 //                val adapter = LeaderboardRVAdapter()
 //                adapter.list = it
-            val adapter = LeaderboardListAdapter()
-            adapter.submitList(it)
-            lbBinding.recyclerView.layoutManager =
-                LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-            lbBinding.recyclerView.adapter = adapter
-
-            val dialog = AlertDialog.Builder(this)
-                .setView(lbBinding.root)
-                .setNegativeButton("Close") { dialog, which -> dialog.dismiss() }
+        val adapter = LeaderboardListAdapter()
+        adapter.submitList(null)
+        lbBinding.recyclerView.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        lbBinding.recyclerView.adapter = adapter
+        val dialog = AlertDialog.Builder(this)
+            .setView(lbBinding.root)
+            .setNegativeButton("Close") { dialog, which -> dialog.dismiss() }
 
 //            val dialog = Dialog(this)
 //            dialog.setContentView(lbBinding.root)
 //            val rv=dialog.findViewById<RecyclerView>(R.id.recyclerView)
 //            rv.adapter=adapter
 //            dialog.set("Close") { dialog, which -> dialog.dismiss() }
-
-
-            Log.d(TAG, "showLeaderboard: ${it[0].id}")
-            dialog.show()
+        dialog.show()
+        profileViewModel.getLeaderboard(token)
+        profileViewModel.leaderboardResponse.observe(this, Observer {
+            if (it !== null) {
+                //observer is called more than once (find why) so only update the list in observer
+                Log.d(TAG, "showLeaderboard: start: ${it[0]}")
+                adapter.submitList(it)
+            }
         })
     }
 
     private fun showCredits(view: CardView) {
+        Log.d(TAG, "showCredits: start")
         val popUpClass = PopUpClass()
         popUpClass.showPopupWindow(view)
     }

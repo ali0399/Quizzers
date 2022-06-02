@@ -9,31 +9,38 @@ import okhttp3.MultipartBody
 
 class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
     //Create User
-    private val mCreateUserResponse = MutableLiveData<CreateUserResponseModel>()
-    val createUserResponse: LiveData<CreateUserResponseModel>
+    private val mCreateUserResponse = MutableLiveData<SafeResponse<CreateUserResponseModel>>()
+    val createUserResponse: LiveData<SafeResponse<CreateUserResponseModel>>
         get() {
             return mCreateUserResponse
         }
 
     suspend fun createUser(body: CreateUserRequestModel) {
-        val result = quizzerProfileApi.createUser(body)
-        if (result != null && result.isSuccessful) {
-            //todo handle error messages
-            mCreateUserResponse.postValue(result.body())
+        mCreateUserResponse.postValue(SafeResponse.Loading())
+        try {
+            val result = quizzerProfileApi.createUser(body)
+            if (result.body() != null && result.code() == 200)
+                mCreateUserResponse.postValue(SafeResponse.Success(result.body()))
+        } catch (e: Exception) {
+            mCreateUserResponse.postValue(SafeResponse.Error(e.message.toString()))
         }
     }
 
     //Login
-    private val mLoginResponseModel = MutableLiveData<LoginResponseModel>()
-    val loginResponse: LiveData<LoginResponseModel>
+    private val mLoginResponseModel = MutableLiveData<SafeResponse<LoginResponseModel>>()
+    val loginResponse: LiveData<SafeResponse<LoginResponseModel>>
         get() {
             return mLoginResponseModel
         }
 
     suspend fun login(body: LoginRequestModel) {
-        val result = quizzerProfileApi.login(body)
-        if (result.body() != null) {
-            mLoginResponseModel.postValue(result.body())
+        mLoginResponseModel.postValue(SafeResponse.Loading())
+        try {
+            val result = quizzerProfileApi.login(body)
+            if (result.body() != null && result.code() == 200)
+                mLoginResponseModel.postValue(SafeResponse.Success(result.body()))
+        } catch (e: Exception) {
+            mLoginResponseModel.postValue(SafeResponse.Error(e.message.toString()))
         }
     }
 
@@ -80,7 +87,7 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
 
     suspend fun updateUsername(token: String, body: UsernameUpdateModel) {
         val result = quizzerProfileApi.updateUsername(token, body)
-        if (result != null)
+        if (result.body() != null)
             mUsernameUpdateResponse.postValue(result.body())
     }
 
@@ -93,7 +100,7 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
 
     suspend fun uploadProfilePhoto(token: String, part: MultipartBody.Part) {
         val result = quizzerProfileApi.uploadProfilePhoto(token, part)
-        if (result != null)
+        if (result.body() != null)
             mPicUploadResponse.postValue(result.body())
     }
 
@@ -107,13 +114,13 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
     suspend fun getLeaderboard(token: String) {
         try {
             val result = quizzerProfileApi.getLeaderboard(token)
-            if (result != null) {
+            if (result.body() != null) {
                 mLeaderboardResponse.postValue(result.body())
                 Log.d("getLeaderboardRepo", "getLeaderboard: ${result.body()}")
             }
         } catch (e: Exception) {
-//            val errorBody = LeaderboardResponseModel()
-//            mLeaderboardResponse.postValue(errorBody)
+            val errorBody = LeaderboardResponseModel()
+            mLeaderboardResponse.postValue(errorBody)
         }
     }
 

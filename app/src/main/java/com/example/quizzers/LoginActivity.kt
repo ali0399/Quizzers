@@ -4,6 +4,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -13,6 +15,7 @@ import com.example.quizzers.network.models.LoginRequestModel
 import com.example.quizzers.network.retrofit.QuizzerProfileApi
 import com.example.quizzers.network.retrofit.RetrofitHelper
 import com.example.quizzers.repository.ProfileRepository
+import com.example.quizzers.repository.SafeResponse
 import com.example.quizzers.viewModels.ProfileViewModel
 import com.example.quizzers.viewModels.ProfileViewModelFactory
 
@@ -80,10 +83,10 @@ class LoginActivity : AppCompatActivity() {
         var emailId = binding.usernameEt.editText?.text.toString()
         var password = binding.passwordEt.editText?.text.toString()
         val createUserRequestBody = CreateUserRequestModel(emailId, emailId, password)
-
-        createUserRequestBody.username = emailId
-        createUserRequestBody.email = emailId
-        createUserRequestBody.password = password
+//
+//        createUserRequestBody.username = emailId
+//        createUserRequestBody.email = emailId
+//        createUserRequestBody.password = password
 
         Log.d(TAG, "createUser: username = $emailId")
 
@@ -92,15 +95,29 @@ class LoginActivity : AppCompatActivity() {
 
         profileViewModel.createUserResponse.observe(this, Observer {
             Log.d(TAG, "createUser response: $it")
-            if (it != null) {
-                with(prefs.edit()) {
-                    putString("Token", "Token " + it.token).apply()
-                    putBoolean("LoggedIn", true).apply()
+            when (it) {
+                is SafeResponse.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
                 }
-                Log.d(TAG, "login: start Main Activity")
-                startActivity(Intent(this, HomeActivity::class.java))
-                finish()
+                is SafeResponse.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    if (it.data != null) {
+                        with(prefs.edit()) {
+                            putString("Token", "Token " + it.data.token).apply()
+                            putBoolean("LoggedIn", true).apply()
+                        }
+                        Log.d(TAG, "createUser: start Main Activity")
+                        startActivity(Intent(this, HomeActivity::class.java))
+                        finish()
+                    }
+                }
+                is SafeResponse.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(this, "CreateUser Error:${it.errorMsg}", Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
+
         })
     }
 
@@ -112,22 +129,35 @@ class LoginActivity : AppCompatActivity() {
         loginRequestBody.username = emailId
         loginRequestBody.password = password
 
-        Log.d(TAG, "onCreate: username = $emailId")
+        Log.d(TAG, "login: username = $emailId")
 
 //        profileViewModel.createUser(createUserRequest)
         profileViewModel.login(loginRequestBody)
 
         profileViewModel.loginResponse.observe(this, Observer {
-            Log.d(TAG, "login: response= ${it}")
-            if (it.token != null) {
-                with(prefs.edit()) {
-                    putString("Token", "Token " + it.token).apply()
-                    putBoolean("LoggedIn", true).apply()
+            Log.d(TAG, "login: response= $it")
+            when (it) {
+                is SafeResponse.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
                 }
-                Log.d(TAG, "login: start Main Activity")
-                startActivity(Intent(this, HomeActivity::class.java))
-                finish()
+                is SafeResponse.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    if (it.data != null) {
+                        with(prefs.edit()) {
+                            putString("Token", "Token " + it.data.token).apply()
+                            putBoolean("LoggedIn", true).apply()
+                        }
+                        Log.d(TAG, "login: start Main Activity")
+                        startActivity(Intent(this, HomeActivity::class.java))
+                        finish()
+                    }
+                }
+                is SafeResponse.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(this, "Login Error: ${it.errorMsg}", Toast.LENGTH_SHORT).show()
+                }
             }
+
         })
     }
 }

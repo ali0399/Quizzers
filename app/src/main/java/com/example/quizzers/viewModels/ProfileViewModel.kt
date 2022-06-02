@@ -88,9 +88,9 @@ class ProfileViewModel(
 //        }
 //    }
 
-    val createUserResponse: LiveData<CreateUserResponseModel>
+    val createUserResponse: LiveData<SafeResponse<CreateUserResponseModel>>
         get() = repository.createUserResponse
-    val loginResponse: LiveData<LoginResponseModel>
+    val loginResponse: LiveData<SafeResponse<LoginResponseModel>>
         get() = repository.loginResponse
     val createScoreResponse: LiveData<CreateScoreResponseModel>
         get() = repository.scoreResponse
