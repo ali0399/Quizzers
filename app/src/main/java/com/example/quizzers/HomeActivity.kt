@@ -2,6 +2,7 @@ package com.example.quizzers
 
 import android.animation.ValueAnimator
 import android.content.*
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
@@ -228,7 +229,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             dialog.show()
         }
         binding.uploadPicBtn.setOnClickListener {
-            pickFile()
+            getPermissions()
         }
         //category spinner
 //        val cats = resources.getStringArray(R.array.categories)
@@ -242,13 +243,14 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 //        ad.setDropDownViewResource(R.layout.spinner_item_layout)
 //        binding.catSpinner.adapter = ada
 
-        getPermissions()
     }
 
 
     private fun getPermissions() {
-        requestPermissions(arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-            PERMISSION_REQ_CODE)
+        if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+            requestPermissions(arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
+                PERMISSION_REQ_CODE)
+        else pickFile()
 
     }
 
@@ -258,9 +260,12 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         grantResults: IntArray,
     ) {
         when (requestCode) {
-            PERMISSION_REQ_CODE -> Toast.makeText(this,
-                "Thank You for the Permission",
-                Toast.LENGTH_SHORT).show()
+            PERMISSION_REQ_CODE -> {
+                Toast.makeText(this,
+                    "Thank You for the Permission",
+                    Toast.LENGTH_SHORT).show()
+                pickFile()
+            }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
@@ -385,7 +390,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         })
     }
 
-    fun pickFile(pickerInitialUri: Uri = Uri.parse("")) {
+    private fun pickFile() {
         val intent = Intent()
             .setType("image/*")
             .setAction(Intent.ACTION_GET_CONTENT)
