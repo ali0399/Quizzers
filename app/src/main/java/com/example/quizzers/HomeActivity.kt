@@ -1,21 +1,21 @@
 package com.example.quizzers
 
 import android.animation.ValueAnimator
-import android.content.*
+import android.content.ContentResolver
+import android.content.DialogInterface
+import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.provider.DocumentsContract
-import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -53,7 +53,8 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
-import java.net.URISyntaxException
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 
 // Request code for selecting a PDF document.
@@ -80,6 +81,16 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     lateinit var navigationView: NavigationView
     var toolbar: Toolbar? = null
     var menu: Menu? = null
+
+    //ActivityResultContracts
+    private val selectImageFromGalleryResult =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                binding.profileIv.setImageURI(it)
+                uploadPic(it)
+            }
+
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: start")
@@ -162,6 +173,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                                     Log.d(TAG, "onCreate: null userProfile: $it")
                                     Glide.with(this@HomeActivity).load(it.display_picture)
                                         .placeholder(R.drawable.ic_baseline_person_24)
+                                        .error(R.drawable.ic_connection_error)
                                         .into(binding.profileIv)
                                 } catch (e: Exception) {
                                     Log.d(TAG, "onCreate: userProfile Pic execption: $e")
@@ -231,17 +243,6 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         binding.uploadPicBtn.setOnClickListener {
             getPermissions()
         }
-        //category spinner
-//        val cats = resources.getStringArray(R.array.categories)
-//        with(binding.catSpinner) {
-//            onItemSelectedListener = this@HomeActivity
-//            setPopupBackgroundDrawable(getDrawable(R.drawable.btn_round_bg))
-//        }
-//        val ad = ArrayAdapter<String>(this,
-//            R.layout.category_spinner_collapse, cats)
-//
-//        ad.setDropDownViewResource(R.layout.spinner_item_layout)
-//        binding.catSpinner.adapter = ada
 
     }
 
@@ -251,7 +252,6 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             requestPermissions(arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
                 PERMISSION_REQ_CODE)
         else pickFile()
-
     }
 
     override fun onRequestPermissionsResult(
@@ -383,106 +383,35 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     private fun updateUsername(firstName: String, lastName: String) {
-        val updateRequest = UsernameUpdateModel(firstName, lastName)
-        profileViewModel.updateUsername(token, updateRequest)
-        profileViewModel.usernameUpdateResponse.observe(this, Observer {
-            binding.usernameTv.text = getString(R.string.Username, it.first_name, it.last_name)
-        })
+        if (firstName != "" || lastName != "") {
+            val updateRequest = UsernameUpdateModel(firstName, lastName)
+            profileViewModel.updateUsername(token, updateRequest)
+            profileViewModel.usernameUpdateResponse.observe(this, Observer {
+                binding.usernameTv.text = getString(R.string.Username, it.first_name, it.last_name)
+            })
+        } else {
+            Toast.makeText(this, "Name cannot be blank", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun pickFile() {
-        val intent = Intent()
-            .setType("image/*")
-            .setAction(Intent.ACTION_GET_CONTENT)
-
-        startActivityForResult(Intent.createChooser(intent, "Select a file"), PICK_PDF_FILE)
+        selectImageFromGalleryResult.launch("image/*")
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        super.onActivityResult(requestCode, resultCode, intent)
 
-        if (requestCode == PICK_PDF_FILE && resultCode == RESULT_OK) {
-            val selectedFile = intent?.data //The uri with the location of the file
-            val path = getRealPathFromURI(this, selectedFile)
-            val file = File(path)
-            binding.profileIv.setImageURI(selectedFile)
-            Log.d(TAG, "onActivityResult: $selectedFile")
-            Log.d(TAG, "onActivityResult: fileSystemPath = $path")
-            val part = MultipartBody.Part.createFormData("display_picture", path,
+    private fun uploadPic(fileUri: Uri) {
+        val parcelFileDescriptor = this.contentResolver.openFileDescriptor(fileUri, "r", null)
+        parcelFileDescriptor?.let {
+            val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
+            val file = File(cacheDir, contentResolver.getFileName(fileUri))
+            val outputStream = FileOutputStream(file)
+            inputStream.copyTo(outputStream)
+            Log.d(TAG, "uploadPic: path= ${file.path}")
+
+            val part = MultipartBody.Part.createFormData("display_picture", file.path,
                 file.asRequestBody("image/*".toMediaTypeOrNull()))
             profileViewModel.uploadPhoto(token, part)
         }
-
-    }
-
-    @Throws(URISyntaxException::class)
-    fun getRealPathFromURI(context: Context, uri: Uri?): String? {
-        var uri = uri
-        var selection: String? = null
-        var selectionArgs: Array<String>? = null
-        // Uri is different in versions after KITKAT (Android 4.4), we need to
-        if (uri != null) {
-            if (Build.VERSION.SDK_INT >= 19 && DocumentsContract.isDocumentUri(context.applicationContext,
-                    uri)
-            ) {
-                if (isExternalStorageDocument(uri)) {
-                    val docId = DocumentsContract.getDocumentId(uri)
-                    val split = docId.split(":").toTypedArray()
-                    return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
-                } else if (isDownloadsDocument(uri)) {
-                    val id = DocumentsContract.getDocumentId(uri)
-                    uri = ContentUris.withAppendedId(
-                        Uri.parse("content://downloads/public_downloads"),
-                        java.lang.Long.valueOf(id))
-                } else if (isMediaDocument(uri)) {
-                    val docId = DocumentsContract.getDocumentId(uri)
-                    val split = docId.split(":").toTypedArray()
-                    val type = split[0]
-                    if ("image" == type) {
-                        uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                    } else if ("video" == type) {
-                        uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                    } else if ("audio" == type) {
-                        uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-                    }
-                    selection = "_id=?"
-                    selectionArgs = arrayOf(
-                        split[1]
-                    )
-                }
-            }
-            if ("content".equals(uri!!.scheme, ignoreCase = true)) {
-                val projection = arrayOf(
-                    MediaStore.Images.Media.DATA
-                )
-                var cursor: Cursor? = null
-                try {
-                    cursor = context.contentResolver
-                        .query(uri, projection, selection, selectionArgs, null)
-                    val column_index: Int =
-                        cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                    if (cursor.moveToFirst()) {
-                        return cursor.getString(column_index)
-                    }
-                } catch (e: java.lang.Exception) {
-                }
-            } else if ("file".equals(uri.scheme, ignoreCase = true)) {
-                return uri.path
-            }
-        }
-        return null
-    }
-
-    fun isExternalStorageDocument(uri: Uri): Boolean {
-        return "com.android.externalstorage.documents" == uri.authority
-    }
-
-    fun isDownloadsDocument(uri: Uri): Boolean {
-        return "com.android.providers.downloads.documents" == uri.authority
-    }
-
-    fun isMediaDocument(uri: Uri): Boolean {
-        return "com.android.providers.media.documents" == uri.authority
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -500,6 +429,19 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             quizViewModel.quizOptions.value?.set("category", "0")   //mixed bag
         else
             quizViewModel.quizOptions.value?.set("category", "${position + 8}")
+    }
+
+    fun ContentResolver.getFileName(fileUri: Uri): String {
+
+        var name = ""
+        val returnCursor = this.query(fileUri, null, null, null, null)
+        if (returnCursor != null) {
+            val nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            returnCursor.moveToFirst()
+            name = returnCursor.getString(nameIndex)
+            returnCursor.close()
+        }
+        return name
     }
 
 }
