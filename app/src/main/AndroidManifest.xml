@@ -28,14 +28,9 @@
             android:label="@string/title_activity_login"
             android:theme="@style/Theme.Quizzers"></activity>
         <activity
-            android:name=".GamePlay"
+            android:name=".GamePlayActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
-        <activity
-            android:name=".GamePlayCompose"
-            android:exported="false"
-            android:label="@string/title_activity_game_play"
-            android:theme="@style/Theme.Quizzers" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

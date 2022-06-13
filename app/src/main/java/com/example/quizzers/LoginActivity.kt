@@ -122,8 +122,13 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun login() {
-        var emailId = binding.usernameEt.editText?.text.toString()
-        var password = binding.passwordEt.editText?.text.toString()
+        var emailId = binding.usernameEt.editText?.text.toString().trim()
+        var password = binding.passwordEt.editText?.text.toString().trim()
+
+        if (emailId == "" || password == "") {
+            Toast.makeText(this, "Fields cannot be blank.", Toast.LENGTH_SHORT).show()
+            return
+        }
         val loginRequestBody = LoginRequestModel("rahman.ateeq26@gmail.com", "password@12")
 
         loginRequestBody.username = emailId
@@ -135,7 +140,7 @@ class LoginActivity : AppCompatActivity() {
         profileViewModel.login(loginRequestBody)
 
         profileViewModel.loginResponse.observe(this, Observer {
-            Log.d(TAG, "login: response= $it")
+            Log.d(TAG, "login: response= ${it.errorMsg}")
             when (it) {
                 is SafeResponse.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
@@ -147,7 +152,6 @@ class LoginActivity : AppCompatActivity() {
                             putString("Token", "Token " + it.data.token).apply()
                             putBoolean("LoggedIn", true).apply()
                         }
-                        Log.d(TAG, "login: start Main Activity")
                         startActivity(Intent(this, HomeActivity::class.java))
                         finish()
                     }

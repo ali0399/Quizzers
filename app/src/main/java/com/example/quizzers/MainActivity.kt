@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
             Text(text = "Hello $name!")
             Button(onClick = {
                 startActivity(Intent(this@MainActivity,
-                    GamePlay::class.java))
+                    GamePlayActivity::class.java))
             }) {
                 Text(text = "Start Quiz")
             }
@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun DefaultPreview() {
         QuizzersTheme {
-            Column() {
+            Column {
                 profileDetail(username = "Rauson Ali")
                 Spacer(modifier = Modifier.padding(8.dp))
                 Greeting("Android")

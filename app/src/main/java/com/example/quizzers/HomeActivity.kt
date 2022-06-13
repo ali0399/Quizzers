@@ -86,7 +86,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private val selectImageFromGalleryResult =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
-                binding.profileIv.setImageURI(it)
+                binding.profileIv.setImageResource(R.drawable.ic_baseline_cloud_upload_24)
                 uploadPic(it)
             }
 
@@ -330,7 +330,8 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     if (it.data != null) {
                         binding.progressBar.visibility = View.GONE
                         startActivity(Intent(this,
-                            GamePlay::class.java).putExtra(QUIZ_DATA, Gson().toJson(it.data)))
+                            GamePlayActivity::class.java).putExtra(QUIZ_DATA,
+                            Gson().toJson(it.data)))
                         finish()
                     }
 
@@ -411,6 +412,19 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             val part = MultipartBody.Part.createFormData("display_picture", file.path,
                 file.asRequestBody("image/*".toMediaTypeOrNull()))
             profileViewModel.uploadPhoto(token, part)
+            profileViewModel.uploadResponse.observe(this, Observer {
+                when (it) {
+                    is SafeResponse.Success -> {
+                        binding.profileIv.setImageURI(fileUri)
+                    }
+                    is SafeResponse.Loading -> {
+                        binding.profileIv.setImageResource(R.drawable.ic_baseline_cloud_upload_24)
+                    }
+                    is SafeResponse.Error -> {
+                        binding.profileIv.setImageResource(R.drawable.ic_connection_error)
+                    }
+                }
+            })
         }
     }
 

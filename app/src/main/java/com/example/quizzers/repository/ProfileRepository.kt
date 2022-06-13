@@ -7,6 +7,7 @@ import com.example.quizzers.network.models.*
 import com.example.quizzers.network.retrofit.QuizzerProfileApi
 import okhttp3.MultipartBody
 
+const val TAG = "ProfileRepository"
 class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
     //Create User
     private val mCreateUserResponse = MutableLiveData<SafeResponse<CreateUserResponseModel>>()
@@ -37,9 +38,18 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
         mLoginResponseModel.postValue(SafeResponse.Loading())
         try {
             val result = quizzerProfileApi.login(body)
-            if (result.body() != null && result.code() == 200)
+            Log.d(TAG, "login: code= ${result.code()}")
+            if (result.code() == 400) {
+//                Log.d(TAG,
+//                    "login: ${result.raw()} ")
+//                val errMsg = (result.body() as LoginErrorResponseModel).non_field_errors[0]
+                mLoginResponseModel.postValue(SafeResponse.Error("Incorrect Credentials."))
+            } else if (result.body() != null && result.code() == 200) {
+                Log.d(TAG, "login: OK")
                 mLoginResponseModel.postValue(SafeResponse.Success(result.body()))
+            }
         } catch (e: Exception) {
+            Log.d(TAG, "login: catch!!! $e")
             mLoginResponseModel.postValue(SafeResponse.Error(e.message.toString()))
         }
     }
@@ -92,16 +102,24 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
     }
 
     //update profile pic
-    private val mPicUploadResponse = MutableLiveData<PicUploadResponse>()
-    val picUploadResponse: LiveData<PicUploadResponse>
+    private val mPicUploadResponse = MutableLiveData<SafeResponse<PicUploadResponse>>()
+    val picUploadResponse: LiveData<SafeResponse<PicUploadResponse>>
         get() {
             return mPicUploadResponse
         }
 
     suspend fun uploadProfilePhoto(token: String, part: MultipartBody.Part) {
-        val result = quizzerProfileApi.uploadProfilePhoto(token, part)
-        if (result.body() != null)
-            mPicUploadResponse.postValue(result.body())
+        mPicUploadResponse.postValue(SafeResponse.Loading())
+        try {
+            val result = quizzerProfileApi.uploadProfilePhoto(token, part)
+            if (result.body() != null && result.code() == 200)
+                mPicUploadResponse.postValue(SafeResponse.Success(result.body()))
+            else if (result.code() == 400)
+                mPicUploadResponse.postValue(SafeResponse.Error("Network Error!"))
+        } catch (e: Exception) {
+            mPicUploadResponse.postValue(SafeResponse.Error("Error: $e"))
+        }
+
     }
 
     //get leaderboard

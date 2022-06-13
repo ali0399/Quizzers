@@ -96,6 +96,8 @@ class ProfileViewModel(
         get() = repository.scoreResponse
     val profileDetails: LiveData<SafeResponse<ProfileDetailResponseModel>>
         get() = repository.profileResponse
+    val uploadResponse: LiveData<SafeResponse<PicUploadResponse>>
+        get() = repository.picUploadResponse
     val usernameUpdateResponse: LiveData<UsernameUpdateModel>
         get() = repository.usernameUpdateResponse
     val leaderboardResponse: LiveData<LeaderboardResponseModel>
