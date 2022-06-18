@@ -97,6 +97,7 @@ class LoginActivity : AppCompatActivity() {
             Log.d(TAG, "createUser response: $it")
             when (it) {
                 is SafeResponse.Loading -> {
+                    disableButtons()
                     binding.progressBar.visibility = View.VISIBLE
                 }
                 is SafeResponse.Success -> {
@@ -112,6 +113,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
                 is SafeResponse.Error -> {
+                    enableButtons()
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(this, "CreateUser Error:${it.errorMsg}", Toast.LENGTH_SHORT)
                         .show()
@@ -143,6 +145,7 @@ class LoginActivity : AppCompatActivity() {
             Log.d(TAG, "login: response= ${it.errorMsg}")
             when (it) {
                 is SafeResponse.Loading -> {
+                    disableButtons()
                     binding.progressBar.visibility = View.VISIBLE
                 }
                 is SafeResponse.Success -> {
@@ -157,11 +160,26 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
                 is SafeResponse.Error -> {
+                    enableButtons()
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(this, "Login Error: ${it.errorMsg}", Toast.LENGTH_SHORT).show()
                 }
             }
 
         })
+    }
+
+    private fun enableButtons() {
+        with(binding) {
+            loginBtn.isEnabled = true
+            switchLoginView.isEnabled = true
+        }
+    }
+
+    private fun disableButtons() {
+        with(binding) {
+            loginBtn.isEnabled = false
+            switchLoginView.isEnabled = false
+        }
     }
 }

@@ -155,9 +155,13 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         profileViewModel.profileDetails.observe(this, Observer {
             when (it) {
                 is SafeResponse.Success -> {
+                    enableButtons()
                     it.data.run {
                         if ((this != null) && (this.id != "")) {
-                            binding.pageLoaderCard.visibility = View.GONE
+                            binding.homeShimmer.stopShimmer()
+                            binding.homeShimmer.visibility = View.GONE
+                            binding.bgLayer.root.visibility = View.GONE
+                            binding.homeContainer.visibility = View.VISIBLE
                             drawerLayout.findViewById<MaterialTextView>(R.id.headerUsernameTV).text =
                                 this.email
                             userFirstName = if (this.first_name == ("")) "Quiz" else this.first_name
@@ -194,8 +198,12 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     }
                 }
                 is SafeResponse.Error -> {
+                    enableButtons()
                     Log.d(TAG, "onCreate: Error fetching profile details")
-                    binding.pageLoaderCard.visibility = View.GONE
+                    binding.homeShimmer.stopShimmer()
+                    binding.homeShimmer.visibility = View.GONE
+                    binding.bgLayer.root.visibility = View.GONE
+                    binding.homeContainer.visibility = View.VISIBLE
                     Toast.makeText(this, "Network Error!", Toast.LENGTH_SHORT).show()
                     userFirstName = "???"
                     userLastName = "???"
@@ -208,7 +216,11 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
                 }
                 is SafeResponse.Loading -> {
-                    binding.pageLoaderCard.visibility = View.VISIBLE
+                    disableButtons()
+                    binding.homeShimmer.startShimmer()
+                    binding.homeShimmer.visibility = View.VISIBLE
+                    binding.bgLayer.root.visibility = View.VISIBLE
+                    binding.homeContainer.visibility = View.GONE
 
                 }
             }
@@ -324,6 +336,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         quizViewModel.quiz.observe(this, Observer {
             when (it) {
                 is SafeResponse.Loading -> {
+                    disableButtons()
                     binding.progressBar.visibility = View.VISIBLE
                 }
                 is SafeResponse.Success -> {
@@ -337,6 +350,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
                 }
                 is SafeResponse.Error -> {
+                    enableButtons()
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(this,
                         "Network Error: ${it.errorMsg}",
@@ -414,13 +428,16 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             profileViewModel.uploadPhoto(token, part)
             profileViewModel.uploadResponse.observe(this, Observer {
                 when (it) {
-                    is SafeResponse.Success -> {
-                        binding.profileIv.setImageURI(fileUri)
-                    }
                     is SafeResponse.Loading -> {
+                        disableButtons()
                         binding.profileIv.setImageResource(R.drawable.ic_baseline_cloud_upload_24)
                     }
+                    is SafeResponse.Success -> {
+                        enableButtons()
+                        binding.profileIv.setImageURI(fileUri)
+                    }
                     is SafeResponse.Error -> {
+                        enableButtons()
                         binding.profileIv.setImageResource(R.drawable.ic_connection_error)
                     }
                 }
@@ -456,6 +473,22 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             returnCursor.close()
         }
         return name
+    }
+
+    private fun enableButtons() {
+        with(binding) {
+            editUsernameBtn.isEnabled = true
+            startQuizBtn.isEnabled = true
+            uploadPicBtn.isEnabled = true
+        }
+    }
+
+    private fun disableButtons() {
+        with(binding) {
+            editUsernameBtn.isEnabled = false
+            startQuizBtn.isEnabled = false
+            uploadPicBtn.isEnabled = false
+        }
     }
 
 }

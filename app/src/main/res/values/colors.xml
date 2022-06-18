@@ -18,5 +18,8 @@
     <color name="colorAlpha1">#88EFC7FF</color>
     <color name="colorScheme6">#EFC7FF</color>
     <color name="transparent">#00000000</color>
+    <color name="grey">#BDBDBD</color>
+    <color name="light_grey">#DCDCDC</color>
+    <color name="dark_grey">#464E5C</color>
 
 </resources>

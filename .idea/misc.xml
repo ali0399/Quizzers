@@ -17,6 +17,7 @@
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/drawable/ic_baseline_info_24.xml" value="0.128" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/drawable/ic_baseline_menu_24.xml" value="0.1155" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/drawable/ic_baseline_person_24.xml" value="0.1205" />
+        <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/drawable/loading_asvg.xml" value="0.187" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/drawable/option_bg.xml" value="0.1825" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/drawable/option_correct_bg.xml" value="0.1825" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/drawable/option_wrong_bg.xml" value="0.1825" />
@@ -24,7 +25,7 @@
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/drawable/stopwatch_icon.xml" value="0.1825" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/drawable/top_bg.xml" value="0.1385" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/activity_game_play.xml" value="0.2" />
-        <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/activity_home.xml" value="0.20521590423257802" />
+        <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/activity_home.xml" value="0.2" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/activity_login.xml" value="0.176" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/category_dialog_layout.xml" value="0.20521590423257802" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/category_item_layout.xml" value="0.536" />
@@ -33,6 +34,8 @@
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/credits_dialog_layout.xml" value="0.20521590423257802" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/drawer_header_layout.xml" value="0.20521590423257802" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/edit_username_dialog.xml" value="0.264" />
+        <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/home_bg.xml" value="0.2017728999577881" />
+        <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/home_loading_layout.xml" value="0.20521590423257802" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/leaderboard_dialog_layout.xml" value="0.18906394810009267" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/leaderboard_item_layout.xml" value="0.4" />
         <entry key="..\:/Projects/AndroidStudio/Quizzers/app/src/main/res/layout/popup_layout.xml" value="0.20521590423257802" />

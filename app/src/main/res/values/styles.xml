@@ -9,7 +9,7 @@
     </style>
 
     <style name="ToolbarColoredBackArrow" parent="ThemeOverlay.AppCompat.Light">
-        <item name="android:textColor">@color/colorScheme1</item>
+        <item name="android:textColor">@color/colorScheme6</item>
         <item name="android:alpha">1</item>
     </style>
 

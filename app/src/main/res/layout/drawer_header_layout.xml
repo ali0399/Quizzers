@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="bottom"
+    android:layout_marginBottom="8dp"
+    android:background="@color/colorAlpha1"
     android:orientation="vertical">
 
     <ImageView
@@ -19,7 +21,10 @@
         android:id="@+id/headerUsernameTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_margin="4dp"
+        android:background="@drawable/round_corner_bg"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="4dp"
         android:text="email"
-        android:textColor="@color/colorScheme1" />
+        android:textColor="@android:color/white" />
 </LinearLayout>
