@@ -162,6 +162,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                             binding.homeShimmer.visibility = View.GONE
                             binding.bgLayer.root.visibility = View.GONE
                             binding.homeContainer.visibility = View.VISIBLE
+                            binding.errorLayer.root.visibility = View.GONE
                             drawerLayout.findViewById<MaterialTextView>(R.id.headerUsernameTV).text =
                                 this.email
                             userFirstName = if (this.first_name == ("")) "Quiz" else this.first_name
@@ -203,7 +204,11 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     binding.homeShimmer.stopShimmer()
                     binding.homeShimmer.visibility = View.GONE
                     binding.bgLayer.root.visibility = View.GONE
-                    binding.homeContainer.visibility = View.VISIBLE
+                    binding.homeContainer.visibility = View.GONE
+                    binding.errorLayer.root.visibility = View.VISIBLE
+                    binding.errorLayer.button.setOnClickListener {
+                        profileViewModel.getProfileDetail(token)
+                    }
                     Toast.makeText(this, "Network Error!", Toast.LENGTH_SHORT).show()
                     userFirstName = "???"
                     userLastName = "???"
@@ -221,6 +226,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     binding.homeShimmer.visibility = View.VISIBLE
                     binding.bgLayer.root.visibility = View.VISIBLE
                     binding.homeContainer.visibility = View.GONE
+                    binding.errorLayer.root.visibility = View.GONE
 
                 }
             }

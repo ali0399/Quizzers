@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.quizzers.network.models.*
 import com.example.quizzers.network.retrofit.QuizzerProfileApi
+import com.google.gson.Gson
 import okhttp3.MultipartBody
 
 const val TAG = "ProfileRepository"
@@ -22,7 +23,14 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
             val result = quizzerProfileApi.createUser(body)
             if (result.body() != null && result.code() == 200)
                 mCreateUserResponse.postValue(SafeResponse.Success(result.body()))
+            else if (result.code() == 400) {
+                val err = Gson().fromJson(result.errorBody()!!.charStream(),
+                    CreateUserErrorModel::class.java)
+                Log.d(TAG, "createUser 400: ${err.message}")
+                mCreateUserResponse.postValue(SafeResponse.Error(err.message))
+            }
         } catch (e: Exception) {
+            Log.d(TAG, "createUser: catch- $e")
             mCreateUserResponse.postValue(SafeResponse.Error(e.message.toString()))
         }
     }
@@ -42,8 +50,9 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
             if (result.code() == 400) {
 //                Log.d(TAG,
 //                    "login: ${result.raw()} ")
-//                val errMsg = (result.body() as LoginErrorResponseModel).non_field_errors[0]
-                mLoginResponseModel.postValue(SafeResponse.Error("Incorrect Credentials."))
+                val errBody = Gson().fromJson(result.errorBody()!!.charStream(),
+                    LoginErrorResponseModel::class.java)
+                mLoginResponseModel.postValue(SafeResponse.Error(errBody.non_field_errors[0]))
             } else if (result.body() != null && result.code() == 200) {
                 Log.d(TAG, "login: OK")
                 mLoginResponseModel.postValue(SafeResponse.Success(result.body()))

@@ -82,6 +82,12 @@ class LoginActivity : AppCompatActivity() {
     private fun createUser() {
         var emailId = binding.usernameEt.editText?.text.toString()
         var password = binding.passwordEt.editText?.text.toString()
+
+        if (emailId.trim() == "" || password.trim() == "") {
+            Toast.makeText(this, "Fields cannot be blank.", Toast.LENGTH_LONG)
+                .show()
+            return
+        }
         val createUserRequestBody = CreateUserRequestModel(emailId, emailId, password)
 //
 //        createUserRequestBody.username = emailId
