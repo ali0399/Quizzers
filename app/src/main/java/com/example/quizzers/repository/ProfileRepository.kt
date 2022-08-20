@@ -92,6 +92,9 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
             val result = quizzerProfileApi.getProfileDetails(token)
             if (result.body() != null && result.code() == 200)
                 mProfileDetailResponse.postValue(SafeResponse.Success(result.body()))
+            else if (result.body() != null && result.code() == 401)
+                mProfileDetailResponse.postValue(SafeResponse.Error("Authorisation error"))
+
         } catch (e: Exception) {
             mProfileDetailResponse.postValue(SafeResponse.Error(e.message.toString()))
         }

@@ -199,6 +199,10 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     }
                 }
                 is SafeResponse.Error -> {
+                    if (it.errorMsg == "Authorisation error") {
+                        startActivity(Intent(this, LoginActivity::class.java))
+                        finish()
+                    }
                     enableButtons()
                     Log.d(TAG, "onCreate: Error fetching profile details")
                     binding.homeShimmer.stopShimmer()
@@ -209,7 +213,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     binding.errorLayer.button.setOnClickListener {
                         profileViewModel.getProfileDetail(token)
                     }
-                    Toast.makeText(this, "Network Error!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Error: ${it.errorMsg}", Toast.LENGTH_SHORT).show()
                     userFirstName = "???"
                     userLastName = "???"
                     binding.apply {
