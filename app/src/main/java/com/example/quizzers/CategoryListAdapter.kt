@@ -3,6 +3,7 @@ package com.example.quizzers
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +19,7 @@ class CategoryListAdapter(private val onClicked: (Int) -> Unit) :
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: String) {
             binding.categoryLabel.text = item
+            binding.categoryIcon.startAnimation(AnimationUtils.loadAnimation(context,R.anim.icon_float_anim))
             var uri = "@drawable/catg_img" // where myresource (without the extension) is the file
             var catId = String.format("%02d", adapterPosition)
             uri += catId

@@ -7,4 +7,18 @@
         <item name="background">@drawable/app_bg</item>
         <item name="android:textColor">@color/colorScheme3</item>
     </style>
+<!--    <style name="Theme.App.Starting" parent="Theme.SplashScreen">-->
+<!--        &lt;!&ndash; Set the splash screen background, animated icon, and animation duration. &ndash;&gt;-->
+<!--        <item name="windowSplashScreenBackground">@color/colorScheme5</item>-->
+
+<!--        &lt;!&ndash; Use windowSplashScreenAnimatedIcon to add either a drawable or an-->
+<!--             animated drawable. One of these is required. &ndash;&gt;-->
+<!--        <item name="windowSplashScreenAnimatedIcon">@drawable/catg_img05</item>-->
+<!--        &lt;!&ndash; Required for animated icons &ndash;&gt;-->
+<!--&lt;!&ndash;        <item name="windowSplashScreenAnimationDuration">200</item>&ndash;&gt;-->
+
+<!--        &lt;!&ndash; Set the theme of the Activity that directly follows your splash screen. &ndash;&gt;-->
+<!--        &lt;!&ndash; Required &ndash;&gt;-->
+<!--        <item name="postSplashScreenTheme">@style/Theme.Quizzers</item>-->
+<!--    </style>-->
 </resources>
