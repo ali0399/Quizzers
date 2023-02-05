@@ -16,7 +16,6 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -28,7 +27,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.quizzers.databinding.ActivityHomeBinding
 import com.example.quizzers.databinding.CategoryDialogLayoutBinding
@@ -83,6 +81,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     lateinit var navigationView: NavigationView
     var toolbar: Toolbar? = null
     var menu: Menu? = null
+    var drawerState = false
 
     //ActivityResultContracts
     private val selectImageFromGalleryResult =
@@ -103,17 +102,37 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         drawerLayout = binding.drawerLayout
         navigationView = binding.navDrawerView
-        toolbar = binding.toolbar
+//        toolbar = binding.toolbar
 
         navigationView.bringToFront()
 
-        val toggle = ActionBarDrawerToggle(this,
-            drawerLayout,
-            toolbar,
-            R.string.navDrawerOpen,
-            R.string.navDrawerClose)
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
+        val hamMenu = binding.menuBtn
+
+        hamMenu.setOnClickListener {
+            // If the navigation drawer is not open then open it, if its already open then close it.
+            if (!drawerLayout.isDrawerOpen(GravityCompat.START)) drawerLayout.openDrawer(
+                GravityCompat.START
+            ) else drawerLayout.closeDrawer(
+                GravityCompat.END
+            )
+        }
+
+        val adapter = CategoryListAdapter { position ->
+            Log.d(TAG, "showCategoryDialog: $position")
+            binding.catgRV.isClickable = false
+
+            if (position == 0)
+                quizViewModel.quizOptions.value?.set("category", "0")   //mixed bag
+            else
+                quizViewModel.quizOptions.value?.set("category", "${position + 8}")
+
+            getQuestions()
+        }
+
+        binding.catgRV.layoutManager =
+            GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false)
+        adapter.submitList(catgList)
+        binding.catgRV.adapter = adapter
 
         navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
@@ -141,8 +160,10 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         val profileService =
             RetrofitHelper.getProfileInstance().create(QuizzerProfileApi::class.java)
         val profileRepository = ProfileRepository(profileService)
-        profileViewModel = ViewModelProvider(this,
-            ProfileViewModelFactory(profileRepository)).get(ProfileViewModel::class.java)
+        profileViewModel = ViewModelProvider(
+            this,
+            ProfileViewModelFactory(profileRepository)
+        ).get(ProfileViewModel::class.java)
 
         prefs = getSharedPreferences("QuizerPrefs", MODE_PRIVATE)
         token = prefs.getString(TOKEN, "")!!
@@ -170,12 +191,16 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                                 this.email
                             userFirstName = if (this.first_name == ("")) "Quiz" else this.first_name
                             userLastName = if (this.last_name == "") "Master" else this.last_name
-                            binding.usernameTv.text = if (getString(R.string.Username,
+                            binding.usernameTv.text = if (getString(
+                                    R.string.Username,
                                     this.first_name,
-                                    this.last_name) == " "
-                            ) "Quiz Master" else getString(R.string.Username,
+                                    this.last_name
+                                ) == " "
+                            ) "Quiz Master" else getString(
+                                R.string.Username,
                                 this.first_name,
-                                this.last_name)
+                                this.last_name
+                            )
                             this.userprofile?.let {
                                 try {
                                     Log.d(TAG, "onCreate: null userProfile: $it")
@@ -223,7 +248,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                         usernameTv.text = getString(R.string.Username, userFirstName, userLastName)
                         scoreTv.text = "???"
                         profileIv.setImageResource(R.drawable.ic_connection_error)
-                        startQuizBtn.isEnabled = false
+//                        startQuizBtn.isEnabled = false
                     }
 
                 }
@@ -244,10 +269,10 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         quizViewModel =
             ViewModelProvider(this, ViewModelFactory(repository)).get(QuizViewModel::class.java)
 
-        binding.startQuizBtn.setOnClickListener {
-            showCategoryDialog()
-
-        }
+//        binding.startQuizBtn.setOnClickListener {
+//            showCategoryDialog()
+//
+//        }
 
         binding.editUsernameBtn.setOnClickListener {
             val dialog = AlertDialog.Builder(this)
@@ -257,8 +282,10 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             dialog.setView(dialogBinding.root)
                 .setTitle("Enter New Username")
                 .setPositiveButton("Edit", DialogInterface.OnClickListener { dialog, which ->
-                    updateUsername(dialogBinding.firstNameEt.text.toString(),
-                        dialogBinding.lastNameEt.text.toString())
+                    updateUsername(
+                        dialogBinding.firstNameEt.text.toString(),
+                        dialogBinding.lastNameEt.text.toString()
+                    )
                 })
                 .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
                     dialog.cancel()
@@ -274,8 +301,10 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     private fun getPermissions() {
         if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-            requestPermissions(arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                PERMISSION_REQ_CODE)
+            requestPermissions(
+                arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
+                PERMISSION_REQ_CODE
+            )
         else pickFile()
     }
 
@@ -286,9 +315,11 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     ) {
         when (requestCode) {
             PERMISSION_REQ_CODE -> {
-                Toast.makeText(this,
+                Toast.makeText(
+                    this,
                     "Thank You for the Permission",
-                    Toast.LENGTH_SHORT).show()
+                    Toast.LENGTH_SHORT
+                ).show()
                 pickFile()
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -315,7 +346,8 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         val dialogBuilder = AlertDialog.Builder(this)
 
         val catgBinding: CategoryDialogLayoutBinding = CategoryDialogLayoutBinding.inflate(
-            LayoutInflater.from(this))
+            LayoutInflater.from(this)
+        )
 
         val dialog = dialogBuilder.setView(catgBinding.root)
             .setNegativeButton("Cancel") { dia, _ ->
@@ -350,24 +382,32 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             when (it) {
                 is SafeResponse.Loading -> {
                     disableButtons()
-                    binding.progressBar.visibility = View.VISIBLE
+//                    binding.progressBar.visibility = View.VISIBLE
                 }
                 is SafeResponse.Success -> {
                     if (it.data != null) {
-                        binding.progressBar.visibility = View.GONE
-                        startActivity(Intent(this,
-                            GamePlayActivity::class.java).putExtra(QUIZ_DATA,
-                            Gson().toJson(it.data)))
+//                        binding.progressBar.visibility = View.GONE
+                        startActivity(
+                            Intent(
+                                this,
+                                GamePlayActivity::class.java
+                            ).putExtra(
+                                QUIZ_DATA,
+                                Gson().toJson(it.data)
+                            )
+                        )
                         finish()
                     }
 
                 }
                 is SafeResponse.Error -> {
                     enableButtons()
-                    binding.progressBar.visibility = View.GONE
-                    Toast.makeText(this,
+//                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(
+                        this,
                         "Network Error: ${it.errorMsg}",
-                        Toast.LENGTH_SHORT).show()
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         })
@@ -376,7 +416,8 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private fun showLeaderboard() {
         val lbBinding: LeaderboardDialogLayoutBinding =
             LeaderboardDialogLayoutBinding.inflate(
-                LayoutInflater.from(this))
+                LayoutInflater.from(this)
+            )
 //                val adapter = LeaderboardRVAdapter()
 //                adapter.list = it
         val adapter = LeaderboardListAdapter()
@@ -436,8 +477,10 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             inputStream.copyTo(outputStream)
             Log.d(TAG, "uploadPic: path= ${file.path}")
 
-            val part = MultipartBody.Part.createFormData("display_picture", file.path,
-                file.asRequestBody("image/*".toMediaTypeOrNull()))
+            val part = MultipartBody.Part.createFormData(
+                "display_picture", file.path,
+                file.asRequestBody("image/*".toMediaTypeOrNull())
+            )
             profileViewModel.uploadPhoto(token, part)
             profileViewModel.uploadResponse.observe(this, Observer {
                 when (it) {
@@ -491,7 +534,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private fun enableButtons() {
         with(binding) {
             editUsernameBtn.isEnabled = true
-            startQuizBtn.isEnabled = true
+//            startQuizBtn.isEnabled = true
             uploadPicBtn.isEnabled = true
         }
     }
@@ -499,7 +542,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private fun disableButtons() {
         with(binding) {
             editUsernameBtn.isEnabled = false
-            startQuizBtn.isEnabled = false
+//            startQuizBtn.isEnabled = false
             uploadPicBtn.isEnabled = false
         }
     }

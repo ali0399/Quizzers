@@ -10,6 +10,8 @@
     <string name="Username">%1$s %2$s</string>
     <string name="navDrawerOpen">Drawer Open</string>
     <string name="navDrawerClose">Drawer Close</string>
+    <string name="let_s_play">Let\'s Play</string>
+    <string name="menu_button">Menu Button</string>
     <string-array name="categories">
         <item>Mixed Bag</item>
         <item>General Knowledge</item>

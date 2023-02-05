@@ -26,7 +26,7 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        debug{
+        debug {
         }
 //        staging {
 //            initWith debug
@@ -44,7 +44,7 @@ android {
             versionNameSuffix "-stage"
             versionCode 1
             versionName "1.0"
-            manifestPlaceholders=[app_name: "Quizerz_Stage"]
+            manifestPlaceholders = [app_name: "Quizerz_Stage"]
         }
         dev {
             dimension "version"
@@ -52,7 +52,7 @@ android {
             versionName "1.0"
             applicationIdSuffix ".dev"
             versionNameSuffix "-dev"
-            manifestPlaceholders=[app_name: "Quizerz"]
+            manifestPlaceholders = [app_name: "Quizerz"]
         }
     }
 //    sourceSets {
@@ -122,6 +122,7 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.github.bumptech.glide:glide:4.13.1'
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    implementation 'com.airbnb.android:lottie:5.2.0'
 
     implementation 'androidx.core:core-splashscreen:1.0.0-beta02'
 

@@ -88,6 +88,7 @@ class GamePlayActivity : AppCompatActivity() {
                         startActivity(Intent(this@GamePlayActivity, HomeActivity::class.java))
                         finish()
                     }
+                    .setCancelable(false)
                     .show()
 //                Toast.makeText(this@GamePlayActivity,"Quiz finish. Score= $mScore / 10",
 //                    Toast.LENGTH_SHORT).show()

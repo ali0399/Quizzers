@@ -3,11 +3,11 @@
     <!--    <corners android:radius="8dp"/>-->
     <!--    <solid android:color="@color/secondaryColor"/>-->
     <gradient
-        android:angle="135"
-        android:centerColor="@color/colorScheme4"
+        android:angle="90"
+        android:centerColor="@color/colorScheme2"
         android:centerX=".4"
         android:centerY=".4"
-        android:endColor="@color/colorScheme5"
+        android:endColor="@color/black1"
         android:startColor="@color/colorScheme2"
         android:type="linear" />
 </shape>

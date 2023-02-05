@@ -22,4 +22,9 @@
     <color name="light_grey">#DCDCDC</color>
     <color name="dark_grey">#464E5C</color>
 
+
+    <color name="black1">#39404A</color>
+    <color name="white1">#fafafa</color>
+
+
 </resources>
