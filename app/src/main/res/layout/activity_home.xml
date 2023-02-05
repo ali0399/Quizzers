@@ -76,7 +76,7 @@
                     android:id="@+id/ivLogo"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
-                    android:src="@drawable/quizerz_logo1"
+                    android:src="@drawable/quizerz_logo_dark"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
