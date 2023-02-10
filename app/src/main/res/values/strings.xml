@@ -12,6 +12,9 @@
     <string name="navDrawerClose">Drawer Close</string>
     <string name="let_s_play">Let\'s Play</string>
     <string name="menu_button">Menu Button</string>
+    <string name="upload_picture">Upload Picture</string>
+    <string name="edit_username">edit Username</string>
+    <string name="username">Username</string>
     <string-array name="categories">
         <item>Mixed Bag</item>
         <item>General Knowledge</item>

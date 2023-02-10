@@ -90,7 +90,6 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 binding.profileIv.setImageResource(R.drawable.ic_baseline_cloud_upload_24)
                 uploadPic(it)
             }
-
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -137,12 +136,12 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_leaderboard -> {
-                    Toast.makeText(this, "LeaderBoard", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(this, "LeaderBoard", Toast.LENGTH_SHORT).show()
                     showLeaderboard()
                 }
                 R.id.nav_logout -> {
                     logout()
-                    Toast.makeText(this, "nav_logout", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(this, "nav_logout", Toast.LENGTH_SHORT).show()
                 }
                 R.id.nav_about -> {
                     Log.d(TAG, "onCreate: nav_about")
@@ -220,6 +219,9 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                                     // same type as the animation. In this case, you can use the
                                     // float value in the translationX property.
                                     binding.scoreTv.text = updatedAnimation.animatedValue.toString()
+                                    binding.scoreTv.setOnClickListener {
+                                        showLeaderboard()
+                                    }
                                 }
                                 start()
                             }
@@ -238,6 +240,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     binding.bgLayer.root.visibility = View.GONE
                     binding.homeContainer.visibility = View.GONE
                     binding.errorLayer.root.visibility = View.VISIBLE
+
                     binding.errorLayer.button.setOnClickListener {
                         profileViewModel.getProfileDetail(token)
                     }
@@ -295,8 +298,8 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         binding.uploadPicBtn.setOnClickListener {
             getPermissions()
         }
-
     }
+
 
 
     private fun getPermissions() {
@@ -382,19 +385,18 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             when (it) {
                 is SafeResponse.Loading -> {
                     disableButtons()
-//                    binding.progressBar.visibility = View.VISIBLE
+                    binding.lottieLoading.visibility = View.VISIBLE
+                    binding.lottieLoading.setOnClickListener {
+                        return@setOnClickListener
+                    }
+
                 }
                 is SafeResponse.Success -> {
                     if (it.data != null) {
-//                        binding.progressBar.visibility = View.GONE
+                        binding.lottieLoading.visibility = View.GONE
                         startActivity(
-                            Intent(
-                                this,
-                                GamePlayActivity::class.java
-                            ).putExtra(
-                                QUIZ_DATA,
-                                Gson().toJson(it.data)
-                            )
+                            Intent(this, GamePlayActivity::class.java)
+                                .putExtra(QUIZ_DATA, Gson().toJson(it.data))
                         )
                         finish()
                     }
@@ -402,7 +404,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 }
                 is SafeResponse.Error -> {
                     enableButtons()
-//                    binding.progressBar.visibility = View.GONE
+                    binding.lottieLoading.visibility = View.GONE
                     Toast.makeText(
                         this,
                         "Network Error: ${it.errorMsg}",
@@ -429,11 +431,6 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             .setView(lbBinding.root)
             .setNegativeButton("Close") { dialog, which -> dialog.dismiss() }
 
-//            val dialog = Dialog(this)
-//            dialog.setContentView(lbBinding.root)
-//            val rv=dialog.findViewById<RecyclerView>(R.id.recyclerView)
-//            rv.adapter=adapter
-//            dialog.set("Close") { dialog, which -> dialog.dismiss() }
         dialog.show()
         profileViewModel.getLeaderboard(token)
         profileViewModel.leaderboardResponse.observe(this, Observer {

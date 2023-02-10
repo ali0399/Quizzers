@@ -8,12 +8,24 @@
     android:theme="@style/Theme.Quizzers"
     tools:context=".GamePlayActivity">
 
+    <ImageView
+        android:id="@+id/timerIv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@android:color/transparent"
+        android:backgroundTint="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/timerTv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/stopwatch_icon"
+        app:tint="@android:color/white" />
 
     <TextView
         android:id="@+id/timerTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
         android:backgroundTint="@android:color/transparent"
         android:text="10"
         android:textColor="@android:color/white"
@@ -22,7 +34,7 @@
         app:layout_constraintEnd_toEndOf="@+id/timerIv"
         app:layout_constraintStart_toStartOf="@id/timerIv"
         app:layout_constraintTop_toTopOf="@id/timerIv"
-        app:layout_constraintVertical_bias="0.6" />
+        app:layout_constraintVertical_bias="0.1" />
 
     <TextView
         android:id="@+id/qNbrTv"
@@ -40,7 +52,8 @@
         android:id="@+id/questionTv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="32dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="32dp"
         android:background="@drawable/round_corner_bg"
         android:backgroundTint="@color/colorScheme4"
         android:gravity="center"
@@ -113,19 +126,6 @@
             android:textSize="18sp" />
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/timerIv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@android:color/transparent"
-        android:backgroundTint="@android:color/transparent"
-        app:layout_constraintBottom_toBottomOf="@+id/timerTv"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/stopwatch_icon"
-        app:tint="@android:color/white" />
 
     <TextView
         android:id="@+id/imageView2"
@@ -142,29 +142,65 @@
         app:layout_constraintTop_toTopOf="@+id/qNbrTv"
         app:srcCompat="@drawable/qnbr_icon" />
 
-    <LinearLayout
+    <!--    <LinearLayout-->
+    <!--        android:id="@+id/scoreUploadProgress"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginBottom="32dp"-->
+    <!--        android:gravity="center"-->
+    <!--        android:orientation="vertical"-->
+    <!--        android:visibility="visible"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent">-->
+
+    <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/scoreUploadProgress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:gravity="center"
-        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/greyAlpha"
+        android:backgroundTint="@color/greyAlpha"
+        android:scaleType="centerInside"
+        android:tint="@color/colorScheme3"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/question_2_dark" />
 
-        <ProgressBar
-            android:layout_width="100dp"
-            android:layout_height="100dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Uploading Scores..."
-            android:textSize="20sp" />
-    </LinearLayout>
+    <!--        <ProgressBar-->
+    <!--            android:layout_width="100dp"-->
+    <!--            android:layout_height="100dp" />-->
+
+    <!--        <TextView-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:gravity="center"-->
+    <!--            android:text="Uploading Scores..."-->
+    <!--            android:textSize="20sp" />-->
+    <!--    </LinearLayout>-->
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieConfetti"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@color/greyAlpha"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:backgroundTint="@color/greyAlpha"
+        android:scaleType="centerInside"
+        android:tint="@color/colorScheme3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/confetti"
+        app:lottie_repeatCount="2" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

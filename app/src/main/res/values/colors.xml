@@ -8,9 +8,9 @@
     <color name="secondaryDarkColor">#6d85cc</color>
     <color name="primaryTextColor">#FFFFFF</color>
     <color name="secondaryTextColor">#3E3E3E</color>
-    <color name="correctAnsColor">#40FF53</color>
-    <color name="incorrectAnsColor">#FF4040</color>
-    <color name="colorScheme1">#000000</color>
+    <color name="correctAnsColor">#50B35A</color>
+    <color name="incorrectAnsColor">#C15B5B</color>
+    <color name="colorScheme1">#323232</color>
     <color name="colorScheme2">#3e394c</color>
     <color name="colorScheme3">#533b7c</color>
     <color name="colorScheme4">#7c589a</color>
@@ -19,6 +19,7 @@
     <color name="colorScheme6">#B09DD6</color>
     <color name="transparent">#00000000</color>
     <color name="grey">#BDBDBD</color>
+    <color name="greyAlpha">#80757575</color>
     <color name="light_grey">#DCDCDC</color>
     <color name="dark_grey">#464E5C</color>
 

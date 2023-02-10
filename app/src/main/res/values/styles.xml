@@ -19,4 +19,9 @@
         <item name="android:windowExitAnimation">@anim/credit_popup_exit_anim</item>
     </style>
 
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/round_corner_bg</item>
+        <item name="backgroundTint">@color/white1</item>
+    </style>
+
 </resources>

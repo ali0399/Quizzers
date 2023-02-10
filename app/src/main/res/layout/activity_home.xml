@@ -62,20 +62,21 @@
                     style="@style/ToolbarColoredBackArrow"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:layout_marginTop="4dp"
+                    android:layout_margin="16dp"
                     android:alpha=".8"
                     android:background="@drawable/round_corner_bg"
                     android:backgroundTint="@color/colorScheme6"
                     android:contentDescription="@string/menu_button"
                     android:src="@drawable/round_menu_24"
+                    app:layout_constraintBottom_toBottomOf="@id/ivLogo"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
                     android:id="@+id/ivLogo"
                     android:layout_width="match_parent"
-                    android:layout_height="70dp"
+                    android:layout_height="80dp"
+                    android:paddingVertical="16dp"
                     android:src="@drawable/quizerz_logo_dark"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -103,30 +104,31 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="-10dp"
                     android:layout_marginBottom="-10dp"
-                    android:alpha=".8"
+                    android:alpha=".5"
+                    android:contentDescription="@string/upload_picture"
                     android:src="@drawable/ic_baseline_edit_24"
                     app:backgroundTint="@android:color/white"
                     app:circularflow_radiusInDP="10dp"
                     app:fabSize="mini"
                     app:layout_constraintBottom_toBottomOf="@+id/profileIv"
-                    app:layout_constraintEnd_toEndOf="@+id/profileIv" />
+                    app:layout_constraintEnd_toEndOf="@+id/profileIv"
+                    tools:visibility="invisible" />
 
                 <TextView
                     android:id="@+id/usernameTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="36dp"
-                    android:layout_marginBottom="32dp"
-                    android:gravity="center"
+                    android:layout_marginStart="8dp"
                     android:paddingHorizontal="20dp"
                     android:paddingVertical="10dp"
-                    android:text="Username"
+                    android:ellipsize="marquee"
                     android:textColor="@color/primaryTextColor"
-                    android:textSize="25sp"
+                    android:text="@string/username"
+                    android:textSize="20sp"
                     app:layout_constraintBottom_toBottomOf="@+id/profileIv"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/profileIv"
                     app:layout_constraintTop_toTopOf="@+id/profileIv" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -135,12 +137,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="-15dp"
                     android:layout_marginBottom="-15dp"
-                    android:alpha=".8"
+                    android:alpha=".5"
                     android:backgroundTint="@android:color/white"
+                    android:contentDescription="@string/edit_username"
                     android:src="@drawable/ic_baseline_edit_24"
                     app:fabSize="mini"
                     app:layout_constraintBottom_toBottomOf="@id/usernameTv"
-                    app:layout_constraintEnd_toEndOf="@+id/usernameTv" />
+                    app:layout_constraintEnd_toEndOf="@+id/usernameTv"
+                    tools:visibility="invisible" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -165,7 +169,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:padding="10dp"
+                        android:paddingVertical="16dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
@@ -206,8 +210,8 @@
                             android:layout_width="1dp"
                             android:layout_height="0dp"
                             android:background="@android:color/holo_blue_light"
+                            android:backgroundTint="@color/colorScheme3"
                             android:orientation="vertical"
-                            app:dividerColor="@color/white1"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -305,17 +309,21 @@
         </LinearLayout>
 
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/animationView"
+            android:id="@+id/lottieLoading"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:visibility="gone"
+            android:background="@color/greyAlpha"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:lottie_autoPlay="true"
+            android:backgroundTint="@color/greyAlpha"
+            android:scaleType="centerInside"
+            android:tint="@color/colorScheme3"
             app:lottie_loop="true"
-            app:lottie_url="https://assets7.lottiefiles.com/packages/lf20_LIU4vHuu1W.json" />
+            app:lottie_autoPlay="true"
+            app:lottie_rawRes="@raw/question_2_dark" />
 
         <include
             android:id="@+id/errorLayer"

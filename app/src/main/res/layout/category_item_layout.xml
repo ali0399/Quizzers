@@ -6,6 +6,8 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     android:backgroundTint="@color/colorScheme3"
+    android:outlineSpotShadowColor="@color/white1"
+    app:cardElevation="2dp"
     app:cardCornerRadius="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,11 +22,11 @@
             android:layout_marginTop="16dp"
             android:background="@android:color/transparent"
             android:src="@drawable/catg_img01"
-            android:tint="@color/white1"
             app:layout_constraintBottom_toTopOf="@id/categoryLabel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white1" />
 
         <TextView
             android:id="@+id/categoryLabel"

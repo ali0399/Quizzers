@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.quizzers.databinding.ActivityGamePlayBinding
+import com.example.quizzers.databinding.ScoreDialogLayoutBinding
 import com.example.quizzers.network.models.CreateScoreRequestModel
 import com.example.quizzers.network.models.Result
 import com.example.quizzers.network.models.TbdResponseModel
@@ -23,7 +24,7 @@ import com.example.quizzers.viewModels.ProfileViewModel
 import com.example.quizzers.viewModels.ProfileViewModelFactory
 import com.google.gson.Gson
 
-const val TOTAL_QUESTIONS = 10
+const val TOTAL_QUESTIONS = 2
 
 class GamePlayActivity : AppCompatActivity() {
     val TAG = "GamePlay"
@@ -55,45 +56,60 @@ class GamePlayActivity : AppCompatActivity() {
                 binding.option2Tv.setBackgroundResource(R.drawable.option_bg)
                 binding.option3Tv.setBackgroundResource(R.drawable.option_bg)
                 binding.option4Tv.setBackgroundResource(R.drawable.option_bg)
-                showQuestion(qNbr, questions[qNbr].question,
-                    setupOptions(questions[qNbr].correct_answer,
-                        questions[qNbr].incorrect_answers))
+                showQuestion(
+                    qNbr, questions[qNbr].question,
+                    setupOptions(
+                        questions[qNbr].correct_answer,
+                        questions[qNbr].incorrect_answers
+                    )
+                )
                 this.start()
             } else {
+                binding.lottieConfetti.visibility = View.VISIBLE
 
-                AlertDialog.Builder(this@GamePlayActivity)
-                    .setTitle("Score")
-                    .setMessage("$mScore / 10")
-                    .setPositiveButton("OK") { dialog, which ->
-                        binding.scoreUploadProgress.visibility = View.VISIBLE
-                        val profileService: QuizzerProfileApi =
-                            RetrofitHelper.getProfileInstance()
-                                .create(QuizzerProfileApi::class.java)
-                        //upload score
-                        val profileRepository = ProfileRepository(profileService)
-                        profileViewModel = ViewModelProvider(this@GamePlayActivity,
-                            ProfileViewModelFactory(profileRepository)).get(ProfileViewModel::class.java)
-                        val scoreRequest = CreateScoreRequestModel(10, correctAttempts, mScore)
-                        val token = prefs.getString("Token", "")!!
-                        profileViewModel.createScore(token, scoreRequest)
-                        profileViewModel.createScoreResponse.observe(this@GamePlayActivity,
-                            Observer {
-                                Log.d(TAG, "onFinish: create score : $it")
-                                if (it != null)
-                                    dialog.cancel()
-                            })
+                val dialogBinding = ScoreDialogLayoutBinding.inflate(layoutInflater)
+                dialogBinding.dialogScoreTV.text = "$mScore / 10"
+                dialogBinding.lottieConfetti.visibility = View.VISIBLE
 
-                    }
+                val dialog = AlertDialog.Builder(this@GamePlayActivity, R.style.CustomAlertDialog)
+                    .setView(dialogBinding.root)
                     .setOnCancelListener {
                         startActivity(Intent(this@GamePlayActivity, HomeActivity::class.java))
                         finish()
                     }
                     .setCancelable(false)
-                    .show()
-//                Toast.makeText(this@GamePlayActivity,"Quiz finish. Score= $mScore / 10",
-//                    Toast.LENGTH_SHORT).show()
-                this.cancel()
+                    .create()
+                dialogBinding.doneBtn.setOnClickListener {
+                    binding.scoreUploadProgress.visibility = View.VISIBLE
+                    val profileService: QuizzerProfileApi =
+                        RetrofitHelper.getProfileInstance()
+                            .create(QuizzerProfileApi::class.java)
+                    //upload score
+                    val profileRepository = ProfileRepository(profileService)
+                    profileViewModel = ViewModelProvider(
+                        this@GamePlayActivity,
+                        ProfileViewModelFactory(profileRepository)
+                    ).get(ProfileViewModel::class.java)
+                    val scoreRequest = CreateScoreRequestModel(10, correctAttempts, mScore)
+                    val token = prefs.getString("Token", "")!!
+                    profileViewModel.createScore(token, scoreRequest)
+                    profileViewModel.createScoreResponse.observe(this@GamePlayActivity,
+                        Observer {
+                            Log.d(TAG, "onFinish: create score : $it")
+                            if (it != null) {
+//                                dialog.dismiss()
+                                startActivity(
+                                    Intent(
+                                        this@GamePlayActivity,
+                                        HomeActivity::class.java
+                                    )
+                                )
 
+                            }
+                        }
+                    )
+                }
+                dialog.show()
             }
         }
     }
@@ -277,6 +293,7 @@ class GamePlayActivity : AppCompatActivity() {
             .setTitle("Exit")
             .setMessage("Are you sure?")
             .setPositiveButton("Yes") { dialog, which ->
+                startActivity(Intent(this@GamePlayActivity, HomeActivity::class.java))
                 finish()
             }
             .setNegativeButton("No") { dialog, which ->

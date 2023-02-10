@@ -17,14 +17,24 @@ class CategoryListAdapter(private val onClicked: (Int) -> Unit) :
         val context: Context,
         private var binding: CategoryItemLayoutBinding,
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: String) {
+        fun bind(item: String, onClicked: (Int) -> Unit) {
             binding.categoryLabel.text = item
-            binding.categoryIcon.startAnimation(AnimationUtils.loadAnimation(context,R.anim.icon_float_anim))
+            binding.categoryIcon.startAnimation(
+                AnimationUtils.loadAnimation(
+                    context,
+                    R.anim.icon_float_anim
+                )
+            )
             var uri = "@drawable/catg_img" // where myresource (without the extension) is the file
             var catId = String.format("%02d", adapterPosition)
             uri += catId
             val imageResource: Int = context.resources.getIdentifier(uri, null, context.packageName)
             binding.categoryIcon.setImageResource(imageResource)
+            binding.root.setOnClickListener {
+                val position = adapterPosition
+                onClicked(position)
+                it.setBackgroundColor(context.getColor(R.color.colorScheme3))
+            }
 
         }
     }
@@ -32,18 +42,12 @@ class CategoryListAdapter(private val onClicked: (Int) -> Unit) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         val viewHolder = CategoryViewHolder(parent.context, CategoryItemLayoutBinding.inflate(
             LayoutInflater.from(parent.context), parent, false))
-        //we can set clicks n animation here on viewHolder.itemView
-        viewHolder.itemView.setOnClickListener {
-            val position = viewHolder.adapterPosition
-            onClicked(position)
-            it.setBackgroundColor(viewHolder.context.getColor(R.color.colorScheme3))
-        }
 
         return viewHolder
     }
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), onClicked)
     }
 
     companion object {
