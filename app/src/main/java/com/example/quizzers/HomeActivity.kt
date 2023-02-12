@@ -225,6 +225,10 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                                 }
                                 start()
                             }
+                            binding.positionTv.text = (this.position ?: 0).toString()
+                            binding.positionTv.setOnClickListener {
+                                showLeaderboard()
+                            }
                         }
                     }
                 }
@@ -277,7 +281,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 //
 //        }
 
-        binding.editUsernameBtn.setOnClickListener {
+        binding.usernameTv.setOnClickListener {
             val dialog = AlertDialog.Builder(this)
             val dialogBinding = EditUsernameDialogBinding.inflate(layoutInflater)
             dialogBinding.firstNameEt.setText(userFirstName)
@@ -295,7 +299,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 })
             dialog.show()
         }
-        binding.uploadPicBtn.setOnClickListener {
+        binding.profileIv.setOnClickListener {
             getPermissions()
         }
     }
@@ -530,17 +534,17 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     private fun enableButtons() {
         with(binding) {
-            editUsernameBtn.isEnabled = true
+            usernameTv.isEnabled = true
 //            startQuizBtn.isEnabled = true
-            uploadPicBtn.isEnabled = true
+            profileIv.isEnabled = true
         }
     }
 
     private fun disableButtons() {
         with(binding) {
-            editUsernameBtn.isEnabled = false
+            usernameTv.isEnabled = false
 //            startQuizBtn.isEnabled = false
-            uploadPicBtn.isEnabled = false
+            profileIv.isEnabled = false
         }
     }
 

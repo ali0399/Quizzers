@@ -8,6 +8,7 @@ data class ProfileDetailResponseModel(
     val last_name: String = "",
     val total_score: Int = 0,
     val userprofile: Userprofile? = null,
+    val position: Int = 0,
 )
 
 data class Userprofile(

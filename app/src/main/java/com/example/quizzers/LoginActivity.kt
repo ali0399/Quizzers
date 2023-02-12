@@ -5,8 +5,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -28,6 +26,7 @@ class LoginActivity : AppCompatActivity() {
     private var loggedIn = false
     private var isNewUser = false
     private lateinit var prefs: SharedPreferences
+    private var buttonText = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -39,12 +38,16 @@ class LoginActivity : AppCompatActivity() {
         val profileService: QuizzerProfileApi =
             RetrofitHelper.getProfileInstance().create(QuizzerProfileApi::class.java)
         val profileRepository = ProfileRepository(profileService)
-        val createUserRequest = CreateUserRequestModel("ali.ateeq26@gmail.com",
+        val createUserRequest = CreateUserRequestModel(
             "ali.ateeq26@gmail.com",
-            "password@12")
+            "ali.ateeq26@gmail.com",
+            "password@12"
+        )
         val loginRequestBody = LoginRequestModel("rahman.ateeq26@gmail.com", "password@12")
-        profileViewModel = ViewModelProvider(this,
-            ProfileViewModelFactory(profileRepository)).get(ProfileViewModel::class.java)
+        profileViewModel = ViewModelProvider(
+            this,
+            ProfileViewModelFactory(profileRepository)
+        ).get(ProfileViewModel::class.java)
 
         binding.loginBtn.setOnClickListener {
             login()
@@ -55,7 +58,8 @@ class LoginActivity : AppCompatActivity() {
             if (isNewUser) {  //currentView:NewUser| change view for login
                 isNewUser = false
                 with(binding.loginBtn) {
-                    text = "Login"
+                    buttonText = "Login"
+                    text = buttonText
                     setOnClickListener {
                         login()
                     }
@@ -67,7 +71,8 @@ class LoginActivity : AppCompatActivity() {
             } else {//currentView:Login| change view for new User
                 isNewUser = true
                 with(binding.loginBtn) {
-                    text = "Create Account"
+                    buttonText = "Create Account"
+                    text = buttonText
                     setOnClickListener {
                         createUser()
                     }
@@ -107,6 +112,7 @@ class LoginActivity : AppCompatActivity() {
                 is SafeResponse.Loading -> {
                     disableButtons()
                     binding.progressBar.visibility = View.VISIBLE
+                    binding.loginBtn.text = ""
                 }
                 is SafeResponse.Success -> {
                     binding.progressBar.visibility = View.GONE
@@ -122,6 +128,7 @@ class LoginActivity : AppCompatActivity() {
                 }
                 is SafeResponse.Error -> {
                     enableButtons()
+                    binding.loginBtn.text = buttonText
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(this, "CreateUser Error:${it.errorMsg}", Toast.LENGTH_SHORT)
                         .show()

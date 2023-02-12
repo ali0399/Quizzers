@@ -24,7 +24,7 @@ import com.example.quizzers.viewModels.ProfileViewModel
 import com.example.quizzers.viewModels.ProfileViewModelFactory
 import com.google.gson.Gson
 
-const val TOTAL_QUESTIONS = 2
+const val TOTAL_QUESTIONS = 10
 
 class GamePlayActivity : AppCompatActivity() {
     val TAG = "GamePlay"
@@ -65,11 +65,31 @@ class GamePlayActivity : AppCompatActivity() {
                 )
                 this.start()
             } else {
-                binding.lottieConfetti.visibility = View.VISIBLE
-
                 val dialogBinding = ScoreDialogLayoutBinding.inflate(layoutInflater)
                 dialogBinding.dialogScoreTV.text = "$mScore / 10"
-                dialogBinding.lottieConfetti.visibility = View.VISIBLE
+                when {
+                    mScore <= 3 -> {
+                        dialogBinding.messageTv.text = "You only fail when you stop trying!"
+                    }
+                    mScore <= 5 -> {
+                        dialogBinding.messageTv.text = "Believe you can and you are halfway there!"
+                    }
+                    mScore <= 8 -> {
+                        dialogBinding.messageTv.text = "Keep calm... You are almost there"
+                    }
+                    mScore == 9 -> {
+                        dialogBinding.messageTv.text = "Can you believe it 😱 !?"
+                    }
+                    mScore == 10 -> {
+                        dialogBinding.messageTv.text =
+                            "That was Legen... wait-4-it...dary, Legendary!!!"
+                    }
+                }
+                if (mScore > 5) {
+                    dialogBinding.lottieConfetti.visibility = View.VISIBLE
+                } else {
+                    dialogBinding.lottieConfetti.visibility = View.GONE
+                }
 
                 val dialog = AlertDialog.Builder(this@GamePlayActivity, R.style.CustomAlertDialog)
                     .setView(dialogBinding.root)
