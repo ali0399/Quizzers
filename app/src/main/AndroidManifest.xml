@@ -25,7 +25,8 @@
             android:name=".LoginActivity"
             android:exported="true"
             android:label="@string/title_activity_login"
-            android:theme="@style/Theme.Quizzers" />
+            android:theme="@style/Theme.Quizzers"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".GamePlayActivity"
             android:exported="false"

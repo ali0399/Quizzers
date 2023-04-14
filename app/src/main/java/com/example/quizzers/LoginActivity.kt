@@ -1,10 +1,16 @@
 package com.example.quizzers
 
+import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent.ACTION_DOWN
 import android.view.View
+import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -19,6 +25,7 @@ import com.example.quizzers.repository.SafeResponse
 import com.example.quizzers.viewModels.ProfileViewModel
 import com.example.quizzers.viewModels.ProfileViewModelFactory
 
+
 class LoginActivity : AppCompatActivity() {
     private val TAG = "LoginActivity"
     private lateinit var binding: ActivityLoginBinding
@@ -31,6 +38,15 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.usernameEt.editText?.imeOptions = ACTION_DOWN
+//        binding.usernameEt.editText?.imeOptions = EditorInfo.IME_ACTION_NEXT
+
+        binding.passwordEt.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
+        binding.passwordEt.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
+
+        setupUI(binding.root)
+
         prefs = getSharedPreferences("QuizerPrefs", MODE_PRIVATE)
         var emailId = ""
         var password = ""
@@ -195,6 +211,37 @@ class LoginActivity : AppCompatActivity() {
         with(binding) {
             loginBtn.isEnabled = false
             switchLoginView.isEnabled = false
+        }
+    }
+
+    fun setupUI(view: View) {
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (view !is EditText) {
+            view.setOnTouchListener { v, event ->
+                hideSoftKeyboard(this@LoginActivity)
+                v.performClick()
+                false
+            }
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                val innerView = view.getChildAt(i)
+                setupUI(innerView)
+            }
+        }
+    }
+
+    fun hideSoftKeyboard(activity: Activity) {
+        val inputMethodManager: InputMethodManager = activity.getSystemService(
+            INPUT_METHOD_SERVICE
+        ) as InputMethodManager
+        if (inputMethodManager.isAcceptingText()) {
+            inputMethodManager.hideSoftInputFromWindow(
+                activity.currentFocus!!.windowToken,
+                0
+            )
         }
     }
 }

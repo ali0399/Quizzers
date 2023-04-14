@@ -8,7 +8,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitHelper {
     private const val BASE_URL = "https://opentdb.com/"// api.php?amount=10&type=multiple
 
-    private const val BASE_URL_PROFILE ="http://3.7.115.151" //"http://ec2-3-83-80-40.compute-1.amazonaws.com/"
+    private const val BASE_URL_PROFILE =
+        "https://quizerz-prod-api.mdateequrrahman.in" //"http://ec2-3-83-80-40.compute-1.amazonaws.com/"
 
     fun getQuizInstance(): Retrofit {
         val logging = HttpLoggingInterceptor()
