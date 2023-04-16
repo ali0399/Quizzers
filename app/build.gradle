@@ -4,12 +4,12 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 32
 
     defaultConfig {
         applicationId "com.example.quizzers"
         minSdk 26
-        targetSdk 33
+        targetSdk 32
         versionCode 1
         versionName "1.0"
 
@@ -19,14 +19,26 @@ android {
         }
     }
 
+    signingConfigs {
+        stage {
+            storeFile file("quizzerz_stage_key.jks")
+            storePassword 'rauson@12'
+            keyAlias 'rauson_12'
+            keyPassword 'rauson@12'
+        }
+    }
+
     buildTypes {
         release {
-
             manifestPlaceholders = [app_name: "Quizerz"]
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
+        }
+        stage {
+            manifestPlaceholders = [app_name: "QuizerzStage"]
+            signingConfig signingConfigs.stage
         }
 //        staging {
 //            initWith debug
@@ -36,25 +48,25 @@ android {
 //        }
     }
     // Specifies one flavor dimension.
-    flavorDimensions "version"
-    productFlavors {
-        stage {
-            dimension "version"
-            applicationIdSuffix ".stage"
-            versionNameSuffix "-stage"
-            versionCode 1
-            versionName "1.0"
-            manifestPlaceholders = [app_name: "Quizerz_Stage"]
-        }
-        dev {
-            dimension "version"
-            versionCode 1
-            versionName "1.0"
-            applicationIdSuffix ".dev"
-            versionNameSuffix "-dev"
-            manifestPlaceholders = [app_name: "Quizerz"]
-        }
-    }
+//    flavorDimensions "version"
+//    productFlavors {
+//        stage {
+//            dimension "version"
+//            applicationIdSuffix ".stage"
+//            versionNameSuffix "-stage"
+//            versionCode 1
+//            versionName "1.0"
+//            manifestPlaceholders = [app_name: "Quizerz_Stage"]
+//        }
+//        dev {
+//            dimension "version"
+//            versionCode 1
+//            versionName "1.0"
+//            applicationIdSuffix ".dev"
+//            versionNameSuffix "-dev"
+//            manifestPlaceholders = [app_name: "Quizerz"]
+//        }
+//    }
 //    sourceSets {
 //        main {
 //            // Changes the directory for Java sources. The default directory is

@@ -33,12 +33,12 @@ import com.example.quizzers.databinding.CategoryDialogLayoutBinding
 import com.example.quizzers.databinding.EditUsernameDialogBinding
 import com.example.quizzers.databinding.LeaderboardDialogLayoutBinding
 import com.example.quizzers.network.CATEGORY_JSON_STRING
+import com.example.quizzers.network.RetrofitHelper
 import com.example.quizzers.network.catgList
 import com.example.quizzers.network.models.CategoryObjectList
 import com.example.quizzers.network.models.UsernameUpdateModel
 import com.example.quizzers.network.retrofit.QuizzerApi
 import com.example.quizzers.network.retrofit.QuizzerProfileApi
-import com.example.quizzers.network.retrofit.RetrofitHelper
 import com.example.quizzers.repository.ProfileRepository
 import com.example.quizzers.repository.QuizzerRepository
 import com.example.quizzers.repository.SafeResponse

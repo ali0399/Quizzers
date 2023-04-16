@@ -16,10 +16,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.quizzers.databinding.ActivityLoginBinding
+import com.example.quizzers.network.RetrofitHelper
 import com.example.quizzers.network.models.CreateUserRequestModel
 import com.example.quizzers.network.models.LoginRequestModel
 import com.example.quizzers.network.retrofit.QuizzerProfileApi
-import com.example.quizzers.network.retrofit.RetrofitHelper
 import com.example.quizzers.repository.ProfileRepository
 import com.example.quizzers.repository.SafeResponse
 import com.example.quizzers.viewModels.ProfileViewModel

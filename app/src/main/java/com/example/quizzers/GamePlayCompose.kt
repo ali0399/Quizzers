@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import com.example.quizzers.network.models.Result
 import com.example.quizzers.network.retrofit.QuizzerApi
-import com.example.quizzers.network.retrofit.RetrofitHelper
+import com.example.quizzers.network.RetrofitHelper
 import com.example.quizzers.repository.QuizzerRepository
 import com.example.quizzers.ui.theme.QuizzersTheme
 import com.example.quizzers.viewModels.QuizViewModel
