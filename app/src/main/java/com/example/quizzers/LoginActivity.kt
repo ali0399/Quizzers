@@ -22,6 +22,7 @@ import com.example.quizzers.network.models.LoginRequestModel
 import com.example.quizzers.network.retrofit.QuizzerProfileApi
 import com.example.quizzers.repository.ProfileRepository
 import com.example.quizzers.repository.SafeResponse
+import com.example.quizzers.utils.isValidEmail
 import com.example.quizzers.viewModels.ProfileViewModel
 import com.example.quizzers.viewModels.ProfileViewModelFactory
 
@@ -111,6 +112,12 @@ class LoginActivity : AppCompatActivity() {
                 .show()
             return
         }
+
+        if (!emailId.isValidEmail()) {
+            Toast.makeText(this, "Invalid email", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val createUserRequestBody = CreateUserRequestModel(emailId, emailId, password)
 //
 //        createUserRequestBody.username = emailId
@@ -162,6 +169,12 @@ class LoginActivity : AppCompatActivity() {
             Toast.makeText(this, "Fields cannot be blank.", Toast.LENGTH_SHORT).show()
             return
         }
+
+        if (!emailId.isValidEmail()) {
+            Toast.makeText(this, "Invalid email", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val loginRequestBody = LoginRequestModel("rahman.ateeq26@gmail.com", "password@12")
 
         loginRequestBody.username = emailId

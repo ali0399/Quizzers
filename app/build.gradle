@@ -37,6 +37,7 @@ android {
         debug {
         }
         stage {
+            debuggable = true
             manifestPlaceholders = [app_name: "QuizerzStage"]
             signingConfig signingConfigs.stage
         }
