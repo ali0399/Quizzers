@@ -5,7 +5,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.quizzers.network.models.*
+import com.example.quizzers.network.models.CreateScoreRequestModel
+import com.example.quizzers.network.models.CreateScoreResponseModel
+import com.example.quizzers.network.models.CreateUserRequestModel
+import com.example.quizzers.network.models.CreateUserResponseModel
+import com.example.quizzers.network.models.LeaderboardResponseModel
+import com.example.quizzers.network.models.LoginRequestModel
+import com.example.quizzers.network.models.LoginResponseModel
+import com.example.quizzers.network.models.PicUploadResponse
+import com.example.quizzers.network.models.ProfileDetailResponseModel
+import com.example.quizzers.network.models.ResetOtpResponseModel
+import com.example.quizzers.network.models.SetNewPasswordResponseModel
+import com.example.quizzers.network.models.UsernameUpdateModel
 import com.example.quizzers.repository.ProfileRepository
 import com.example.quizzers.repository.SafeResponse
 import kotlinx.coroutines.launch
@@ -25,7 +36,7 @@ class ProfileViewModel(
         }*/
     }
 
-    fun login(requestBody: LoginRequestModel){
+    fun login(requestBody: LoginRequestModel) {
         Log.d(TAG, "login: start")
         viewModelScope.launch {
             repository.login(requestBody)
@@ -49,7 +60,7 @@ class ProfileViewModel(
     fun getProfileDetail(token: String) {
         Log.d(TAG, "getProfileDetail: start")
         viewModelScope.launch {
-                repository.getProfileDetail(token)
+            repository.getProfileDetail(token)
         }
     }
 
@@ -80,6 +91,19 @@ class ProfileViewModel(
         }
     }
 
+    fun resetPassword(email: String) {
+        viewModelScope.launch {
+            repository.resetPassword(email = email)
+            return@launch
+        }
+    }
+
+    fun setNewPassword(email: String, newPassword: String, otp: String) {
+        viewModelScope.launch {
+            repository.setNewPassword(email = email, password = newPassword, otp = otp)
+        }
+    }
+
 
 //    fun createUser(requestBody:Any){
 //        Log.d(TAG, "createUser: start")
@@ -104,5 +128,9 @@ class ProfileViewModel(
         get() = repository.leaderboardResponse
     val logoutResponseCd: LiveData<String>
         get() = repository.logoutResponse
+    val resetResponse: LiveData<ResetOtpResponseModel>
+        get() = repository.resetResponse
+    val setNewPasswordResponse: LiveData<SetNewPasswordResponseModel>
+        get() = repository.setNewResponse
 
 }

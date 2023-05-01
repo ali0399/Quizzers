@@ -13,14 +13,12 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.quizzers.databinding.ActivityLoginBinding
-import com.example.quizzers.network.RetrofitHelper
 import com.example.quizzers.network.models.CreateUserRequestModel
 import com.example.quizzers.network.models.LoginRequestModel
-import com.example.quizzers.network.retrofit.QuizzerProfileApi
-import com.example.quizzers.repository.ProfileRepository
 import com.example.quizzers.repository.SafeResponse
 import com.example.quizzers.utils.isValidEmail
 import com.example.quizzers.viewModels.ProfileViewModel
@@ -40,21 +38,26 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.usernameEt.editText?.imeOptions = ACTION_DOWN
+        binding.loginView.usernameEt.editText?.imeOptions = ACTION_DOWN
 //        binding.usernameEt.editText?.imeOptions = EditorInfo.IME_ACTION_NEXT
 
-        binding.passwordEt.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
-        binding.passwordEt.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
+        binding.loginView.passwordEt.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
+        binding.loginView.passwordEt.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
+
+        binding.loginView.usernameEt.editText?.addTextChangedListener {
+            if (it?.toString().isValidEmail()) {
+                binding.loginView.resetPasswordTv.visibility = View.VISIBLE
+            } else {
+                binding.loginView.resetPasswordTv.visibility = View.GONE
+            }
+        }
 
         setupUI(binding.root)
 
         prefs = getSharedPreferences("QuizerPrefs", MODE_PRIVATE)
-        var emailId = ""
+        var emailId: String = ""
         var password = ""
 
-        val profileService: QuizzerProfileApi =
-            RetrofitHelper.getProfileInstance().create(QuizzerProfileApi::class.java)
-        val profileRepository = ProfileRepository(profileService)
         val createUserRequest = CreateUserRequestModel(
             "ali.ateeq26@gmail.com",
             "ali.ateeq26@gmail.com",
@@ -63,49 +66,95 @@ class LoginActivity : AppCompatActivity() {
         val loginRequestBody = LoginRequestModel("rahman.ateeq26@gmail.com", "password@12")
         profileViewModel = ViewModelProvider(
             this,
-            ProfileViewModelFactory(profileRepository)
+            ProfileViewModelFactory()
         ).get(ProfileViewModel::class.java)
 
-        binding.loginBtn.setOnClickListener {
+        binding.loginView.loginBtn.setOnClickListener {
             login()
         }
 
+        binding.loginView.resetPasswordTv.setOnClickListener {
+            emailId = binding.loginView.usernameEt.editText?.text.toString()
+            if (emailId.isValidEmail()) {
+                binding.resetPasswordView.emailTv.text = getString(R.string.reset_email, emailId)
+                profileViewModel.resetPassword(
+                    binding.loginView.usernameEt.editText?.text.toString().trim()
+                )
+                disableButtons()
+            }
+        }
 
-        binding.switchLoginView.setOnClickListener {
+        binding.resetPasswordView.resendOtpBtn.setOnClickListener {
+            if (emailId.isValidEmail()) {
+                binding.resetPasswordView.emailTv.text = getString(R.string.reset_email, emailId)
+                profileViewModel.resetPassword(
+                    binding.loginView.usernameEt.editText?.text.toString().trim()
+                )
+                disableButtons()
+            }
+        }
+
+        profileViewModel.resetResponse.observe(this) {
+            if (it.detail.isNotBlank()) {
+                Toast.makeText(this, it.detail, Toast.LENGTH_SHORT).show()
+                binding.contentSwitcher.showNext()
+                enableButtons()
+            }
+        }
+
+        profileViewModel.setNewPasswordResponse.observe(this) {
+            if (it.detail.isNotBlank()) {
+                Toast.makeText(this, it.detail, Toast.LENGTH_SHORT).show()
+                binding.contentSwitcher.showPrevious()
+                enableButtons()
+            }
+        }
+
+        binding.resetPasswordView.updatePasswordBtn.setOnClickListener {
+            profileViewModel.setNewPassword(
+                email = emailId,
+                newPassword = binding.resetPasswordView.passwordEt.editText?.text.toString(),
+                otp = binding.resetPasswordView.otpEt.editText?.text.toString()
+            )
+            disableButtons()
+        }
+
+        binding.loginView.switchLoginView.setOnClickListener {
             if (isNewUser) {  //currentView:NewUser| change view for login
                 isNewUser = false
-                with(binding.loginBtn) {
+                with(binding.loginView.loginBtn) {
                     buttonText = "Login"
                     text = buttonText
                     setOnClickListener {
                         login()
                     }
                 }
-                binding.usernameEt.editText!!.text.clear()
-                binding.passwordEt.editText!!.text.clear()
-                binding.usernameEt.hint = "Username"
-                binding.switchLoginView.text = resources.getText(R.string.switch_to_new_user)
+                binding.loginView.usernameEt.editText!!.text.clear()
+                binding.loginView.passwordEt.editText!!.text.clear()
+                binding.loginView.usernameEt.hint = "Username"
+                binding.loginView.switchLoginView.text =
+                    resources.getText(R.string.switch_to_new_user)
             } else {//currentView:Login| change view for new User
                 isNewUser = true
-                with(binding.loginBtn) {
+                with(binding.loginView.loginBtn) {
                     buttonText = "Create Account"
                     text = buttonText
                     setOnClickListener {
                         createUser()
                     }
                 }
-                binding.usernameEt.editText!!.text.clear()
-                binding.passwordEt.editText!!.text.clear()
-                binding.usernameEt.hint = "Email Id"
-                binding.switchLoginView.text = resources.getText(R.string.switch_to_login)
+                binding.loginView.usernameEt.editText!!.text.clear()
+                binding.loginView.passwordEt.editText!!.text.clear()
+                binding.loginView.usernameEt.hint = "Email Id"
+                binding.loginView.switchLoginView.text = resources.getText(R.string.switch_to_login)
             }
         }
 
     }
 
     private fun createUser() {
-        var emailId = binding.usernameEt.editText?.text.toString()
-        var password = binding.passwordEt.editText?.text.toString()
+        var emailId = binding.loginView.usernameEt.editText?.text.toString()
+        var password = binding.loginView.passwordEt.editText?.text.toString()
 
         if (emailId.trim() == "" || password.trim() == "") {
             Toast.makeText(this, "Fields cannot be blank.", Toast.LENGTH_LONG)
@@ -134,11 +183,12 @@ class LoginActivity : AppCompatActivity() {
             when (it) {
                 is SafeResponse.Loading -> {
                     disableButtons()
-                    binding.progressBar.visibility = View.VISIBLE
-                    binding.loginBtn.text = ""
+                    binding.loginView.progressBar.visibility = View.VISIBLE
+                    binding.loginView.loginBtn.text = ""
                 }
+
                 is SafeResponse.Success -> {
-                    binding.progressBar.visibility = View.GONE
+                    binding.loginView.progressBar.visibility = View.GONE
                     if (it.data != null) {
                         with(prefs.edit()) {
                             putString("Token", "Token " + it.data.token).apply()
@@ -149,10 +199,11 @@ class LoginActivity : AppCompatActivity() {
                         finish()
                     }
                 }
+
                 is SafeResponse.Error -> {
                     enableButtons()
-                    binding.loginBtn.text = buttonText
-                    binding.progressBar.visibility = View.GONE
+                    binding.loginView.loginBtn.text = buttonText
+                    binding.loginView.progressBar.visibility = View.GONE
                     Toast.makeText(this, "CreateUser Error:${it.errorMsg}", Toast.LENGTH_SHORT)
                         .show()
                 }
@@ -162,8 +213,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun login() {
-        var emailId = binding.usernameEt.editText?.text.toString().trim()
-        var password = binding.passwordEt.editText?.text.toString().trim()
+        var emailId = binding.loginView.usernameEt.editText?.text.toString().trim()
+        var password = binding.loginView.passwordEt.editText?.text.toString().trim()
 
         if (emailId == "" || password == "") {
             Toast.makeText(this, "Fields cannot be blank.", Toast.LENGTH_SHORT).show()
@@ -190,10 +241,11 @@ class LoginActivity : AppCompatActivity() {
             when (it) {
                 is SafeResponse.Loading -> {
                     disableButtons()
-                    binding.progressBar.visibility = View.VISIBLE
+                    binding.loginView.progressBar.visibility = View.VISIBLE
                 }
+
                 is SafeResponse.Success -> {
-                    binding.progressBar.visibility = View.GONE
+                    binding.loginView.progressBar.visibility = View.GONE
                     if (it.data != null) {
                         with(prefs.edit()) {
                             putString("Token", "Token " + it.data.token).apply()
@@ -203,9 +255,10 @@ class LoginActivity : AppCompatActivity() {
                         finish()
                     }
                 }
+
                 is SafeResponse.Error -> {
                     enableButtons()
-                    binding.progressBar.visibility = View.GONE
+                    binding.loginView.progressBar.visibility = View.GONE
                     Toast.makeText(this, "Login Error: ${it.errorMsg}", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -214,16 +267,26 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun enableButtons() {
-        with(binding) {
+        with(binding.loginView) {
             loginBtn.isEnabled = true
             switchLoginView.isEnabled = true
+            resetPasswordTv.isEnabled = true
+        }
+        with(binding.resetPasswordView) {
+            updatePasswordBtn.isEnabled = true
+            resendOtpBtn.isEnabled = true
         }
     }
 
     private fun disableButtons() {
-        with(binding) {
+        with(binding.loginView) {
             loginBtn.isEnabled = false
             switchLoginView.isEnabled = false
+            resetPasswordTv.isEnabled = false
+        }
+        with(binding.resetPasswordView) {
+            updatePasswordBtn.isEnabled = false
+            resendOtpBtn.isEnabled = false
         }
     }
 

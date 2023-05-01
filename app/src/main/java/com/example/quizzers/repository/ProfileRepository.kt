@@ -3,7 +3,22 @@ package com.example.quizzers.repository
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.quizzers.network.models.*
+import com.example.quizzers.network.models.CreateScoreRequestModel
+import com.example.quizzers.network.models.CreateScoreResponseModel
+import com.example.quizzers.network.models.CreateUserErrorModel
+import com.example.quizzers.network.models.CreateUserRequestModel
+import com.example.quizzers.network.models.CreateUserResponseModel
+import com.example.quizzers.network.models.LeaderboardResponseModel
+import com.example.quizzers.network.models.LoginErrorResponseModel
+import com.example.quizzers.network.models.LoginRequestModel
+import com.example.quizzers.network.models.LoginResponseModel
+import com.example.quizzers.network.models.PicUploadResponse
+import com.example.quizzers.network.models.ProfileDetailResponseModel
+import com.example.quizzers.network.models.ResetOtpResponseModel
+import com.example.quizzers.network.models.ResetPasswordRequest
+import com.example.quizzers.network.models.SetNewPasswordRequest
+import com.example.quizzers.network.models.SetNewPasswordResponseModel
+import com.example.quizzers.network.models.UsernameUpdateModel
 import com.example.quizzers.network.retrofit.QuizzerProfileApi
 import com.google.gson.Gson
 import okhttp3.MultipartBody
@@ -30,7 +45,7 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
                 mCreateUserResponse.postValue(SafeResponse.Error(err.message))
             }
         } catch (e: Exception) {
-            Log.d(TAG, "createUser: catch- $e")
+            Log.e(TAG, "createUser: catch- $e")
             mCreateUserResponse.postValue(SafeResponse.Error(e.message.toString()))
         }
     }
@@ -50,8 +65,35 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
             if (result.code() == 400) {
 //                Log.d(TAG,
 //                    "login: ${result.raw()} ")
-                val errBody = Gson().fromJson(result.errorBody()!!.charStream(),
-                    LoginErrorResponseModel::class.java)
+                val errBody = Gson().fromJson(
+                    result.errorBody()!!.charStream(),
+                    LoginErrorResponseModel::class.java
+                )
+                mLoginResponseModel.postValue(SafeResponse.Error(errBody.non_field_errors[0]))
+            } else if (result.body() != null && result.code() == 200) {
+                Log.d(TAG, "login: OK")
+                mLoginResponseModel.postValue(SafeResponse.Success(result.body()))
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "login: catch!!! $e")
+            mLoginResponseModel.postValue(SafeResponse.Error(e.message.toString()))
+        }
+    }
+
+    //reset password
+
+    suspend fun resetPassword(body: LoginRequestModel) {
+        mLoginResponseModel.postValue(SafeResponse.Loading())
+        try {
+            val result = quizzerProfileApi.login(body)
+            Log.d(TAG, "login: code= ${result.code()}")
+            if (result.code() == 400) {
+//                Log.d(TAG,
+//                    "login: ${result.raw()} ")
+                val errBody = Gson().fromJson(
+                    result.errorBody()!!.charStream(),
+                    LoginErrorResponseModel::class.java
+                )
                 mLoginResponseModel.postValue(SafeResponse.Error(errBody.non_field_errors[0]))
             } else if (result.body() != null && result.code() == 200) {
                 Log.d(TAG, "login: OK")
@@ -62,6 +104,7 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
             mLoginResponseModel.postValue(SafeResponse.Error(e.message.toString()))
         }
     }
+
 
     //CreateScore
     private val mCreateScoreResponse = MutableLiveData<CreateScoreResponseModel>()
@@ -169,7 +212,54 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
                 mLogoutResponse.postValue(result.code().toString())
             }
         } catch (e: Exception) {
-            Log.d("ProfileRepository", "logout: Error: $e")
+            Log.e("ProfileRepository", "logout: Error: $e")
         }
     }
+
+    //ResetPassword
+
+    private val mResetResponse = MutableLiveData<ResetOtpResponseModel>()
+    val resetResponse: LiveData<ResetOtpResponseModel>
+        get() {
+            return mResetResponse
+        }
+
+    suspend fun resetPassword(email: String) {
+        try {
+            val result = quizzerProfileApi.sendResetOtp(ResetPasswordRequest(email = email))
+            if (result.code() != 0) {
+                println("ResetPassword result:" + result.code().toString())
+                mResetResponse.postValue(result.body())
+            }
+        } catch (e: java.lang.Exception) {
+            Log.e("ProfileRepository", "resetPassword: Error: $e")
+        }
+    }
+
+    //Set new password
+
+    private val mSetNewResponse = MutableLiveData<SetNewPasswordResponseModel>()
+    val setNewResponse: LiveData<SetNewPasswordResponseModel>
+        get() {
+            return mSetNewResponse
+        }
+
+    suspend fun setNewPassword(email: String, password: String, otp: String) {
+        try {
+            val result = quizzerProfileApi.setNewPassword(
+                SetNewPasswordRequest(
+                    email = email,
+                    otp = otp,
+                    password = password
+                )
+            )
+            if (result.code() != 0) {
+                println("ResetPassword result:" + result.code().toString())
+                mSetNewResponse.postValue(result.body())
+            }
+        } catch (e: java.lang.Exception) {
+            Log.e("ProfileRepository", "resetPassword: Error: $e")
+        }
+    }
+
 }

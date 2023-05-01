@@ -2,7 +2,11 @@ package com.example.quizzers
 
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.text.Html
 import android.util.Log
 import android.view.View
@@ -14,12 +18,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.quizzers.databinding.ActivityGamePlayBinding
 import com.example.quizzers.databinding.ScoreDialogLayoutBinding
-import com.example.quizzers.network.RetrofitHelper
 import com.example.quizzers.network.models.CreateScoreRequestModel
 import com.example.quizzers.network.models.Result
 import com.example.quizzers.network.models.TbdResponseModel
-import com.example.quizzers.network.retrofit.QuizzerProfileApi
-import com.example.quizzers.repository.ProfileRepository
 import com.example.quizzers.viewModels.ProfileViewModel
 import com.example.quizzers.viewModels.ProfileViewModelFactory
 import com.google.gson.Gson
@@ -101,14 +102,10 @@ class GamePlayActivity : AppCompatActivity() {
                     .create()
                 dialogBinding.doneBtn.setOnClickListener {
                     binding.scoreUploadProgress.visibility = View.VISIBLE
-                    val profileService: QuizzerProfileApi =
-                        RetrofitHelper.getProfileInstance()
-                            .create(QuizzerProfileApi::class.java)
-                    //upload score
-                    val profileRepository = ProfileRepository(profileService)
+
                     profileViewModel = ViewModelProvider(
                         this@GamePlayActivity,
-                        ProfileViewModelFactory(profileRepository)
+                        ProfileViewModelFactory()
                     ).get(ProfileViewModel::class.java)
                     val scoreRequest = CreateScoreRequestModel(10, correctAttempts, mScore)
                     val token = prefs.getString("Token", "")!!

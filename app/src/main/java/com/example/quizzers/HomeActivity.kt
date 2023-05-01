@@ -33,14 +33,9 @@ import com.example.quizzers.databinding.CategoryDialogLayoutBinding
 import com.example.quizzers.databinding.EditUsernameDialogBinding
 import com.example.quizzers.databinding.LeaderboardDialogLayoutBinding
 import com.example.quizzers.network.CATEGORY_JSON_STRING
-import com.example.quizzers.network.RetrofitHelper
 import com.example.quizzers.network.catgList
 import com.example.quizzers.network.models.CategoryObjectList
 import com.example.quizzers.network.models.UsernameUpdateModel
-import com.example.quizzers.network.retrofit.QuizzerApi
-import com.example.quizzers.network.retrofit.QuizzerProfileApi
-import com.example.quizzers.repository.ProfileRepository
-import com.example.quizzers.repository.QuizzerRepository
 import com.example.quizzers.repository.SafeResponse
 import com.example.quizzers.viewModels.ProfileViewModel
 import com.example.quizzers.viewModels.ProfileViewModelFactory
@@ -155,13 +150,9 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         categoryJson = Gson().fromJson(CATEGORY_JSON_STRING, CategoryObjectList::class.java)
 
-
-        val profileService =
-            RetrofitHelper.getProfileInstance().create(QuizzerProfileApi::class.java)
-        val profileRepository = ProfileRepository(profileService)
         profileViewModel = ViewModelProvider(
             this,
-            ProfileViewModelFactory(profileRepository)
+            ProfileViewModelFactory()
         ).get(ProfileViewModel::class.java)
 
         prefs = getSharedPreferences("QuizerPrefs", MODE_PRIVATE)
@@ -271,10 +262,9 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             }
 
         })
-        val quizService = RetrofitHelper.getQuizInstance().create(QuizzerApi::class.java)
-        val repository = QuizzerRepository(quizService)
+
         quizViewModel =
-            ViewModelProvider(this, ViewModelFactory(repository)).get(QuizViewModel::class.java)
+            ViewModelProvider(this, ViewModelFactory()).get(QuizViewModel::class.java)
 
 //        binding.startQuizBtn.setOnClickListener {
 //            showCategoryDialog()

@@ -19,90 +19,28 @@
         android:paddingHorizontal="20dp"
         android:paddingVertical="30dp"
         android:src="@drawable/quizerz_logo_dark"
-        app:layout_constraintBottom_toTopOf="@+id/usernameEt"
+        app:layout_constraintBottom_toTopOf="@+id/contentSwitcher"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/usernameEt"
-        style="@style/Style.EditText"
-        android:layout_width="match_parent"
+    <ViewSwitcher
+        android:id="@+id/contentSwitcher"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="16dp"
-        android:padding="2dp"
-        android:hint="Username"
-        app:layout_constraintBottom_toTopOf="@+id/passwordEt"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/transparent"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
+        <include
+            android:id="@+id/loginView"
+            layout="@layout/login_view" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/passwordEt"
-        style="@style/Style.EditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="50dp"
-        android:padding="2dp"
-        android:hint="Password"
-        app:layout_constraintBottom_toTopOf="@+id/loginBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:passwordToggleEnabled="true">
+        <include
+            android:id="@+id/resetPasswordView"
+            layout="@layout/reset_password_view" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/transparent"
-            android:imeOptions="actionDone"
-            android:inputType="textPassword"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:elevation="5dp"
-        android:padding="8dp"
-        android:visibility="gone"
-        android:progressTint="@color/white1"
-        app:layout_constraintBottom_toBottomOf="@+id/loginBtn"
-        app:layout_constraintStart_toStartOf="@id/loginBtn"
-        app:layout_constraintEnd_toEndOf="@+id/loginBtn"
-        app:layout_constraintTop_toTopOf="@+id/loginBtn" />
-
-    <Button
-        android:id="@+id/loginBtn"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:text="@string/login"
-        android:backgroundTint="@color/colorScheme5"
-        app:layout_constraintBottom_toTopOf="@id/switchLoginView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-    <Button
-        android:id="@+id/switchLoginView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="32dp"
-        android:background="@android:color/transparent"
-        android:text="@string/switch_to_new_user"
-        android:textAllCaps="false"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+    </ViewSwitcher>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

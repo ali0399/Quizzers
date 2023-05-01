@@ -15,16 +15,23 @@ object RetrofitHelper {
         else
             "http://127.0.0.1:8000/"
 
+    var profileRetrofit: Retrofit? = null
+    var quizRetrofit: Retrofit? = null
     fun getQuizInstance(): Retrofit {
         val logging = HttpLoggingInterceptor()
 // set your desired log level
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
         val okHttpClient = OkHttpClient.Builder().addInterceptor(logging).build()
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClient)
-            .build()
+        return if (quizRetrofit == null) {
+            quizRetrofit = Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient)
+                .build()
+            quizRetrofit!!
+        } else {
+            quizRetrofit!!
+        }
     }
 
     fun getProfileInstance(): Retrofit {
@@ -32,10 +39,13 @@ object RetrofitHelper {
 // set your desired log level
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
         val okHttpClient = OkHttpClient.Builder().addInterceptor(logging).build()
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL_PROFILE)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClient)
-            .build()
+        return if (profileRetrofit == null) {
+            profileRetrofit = Retrofit.Builder()
+                .baseUrl(BASE_URL_PROFILE)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient)
+                .build()
+            profileRetrofit!!
+        } else profileRetrofit!!
     }
 }

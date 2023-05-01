@@ -7,6 +7,8 @@
     <string name="switch_to_login">Existing User? Login.</string>
     <string name="create_account">Create Account</string>
     <string name="login">Login</string>
+    <string name="update_password">Update Password</string>
+    <string name="resend_otp">Resend OTP</string>
     <string name="Username">%1$s %2$s</string>
     <string name="navDrawerOpen">Drawer Open</string>
     <string name="navDrawerClose">Drawer Close</string>
@@ -15,6 +17,8 @@
     <string name="upload_picture">Upload Picture</string>
     <string name="edit_username">edit Username</string>
     <string name="username">Username</string>
+    <string name="reset_email">Reset password for %s</string>
+
     <string-array name="categories">
         <item>Mixed Bag</item>
         <item>General Knowledge</item>
