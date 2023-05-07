@@ -37,6 +37,10 @@
             android:exported="true"
             android:launchMode="singleTask"
             android:theme="@style/Theme.Quizzers" />
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-7166547729849878~7961919683" />
     </application>
 
 </manifest>

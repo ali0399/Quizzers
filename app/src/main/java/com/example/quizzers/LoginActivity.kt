@@ -95,18 +95,36 @@ class LoginActivity : AppCompatActivity() {
         }
 
         profileViewModel.resetResponse.observe(this) {
-            if (it.detail.isNotBlank()) {
-                Toast.makeText(this, it.detail, Toast.LENGTH_SHORT).show()
-                binding.contentSwitcher.showNext()
-                enableButtons()
+            when (it) {
+                is SafeResponse.Success -> {
+                    Toast.makeText(this, it.data?.detail ?: "", Toast.LENGTH_SHORT).show()
+                    binding.contentSwitcher.showNext()
+                    enableButtons()
+                }
+
+                is SafeResponse.Error -> {
+                    Toast.makeText(this, it.errorMsg ?: "", Toast.LENGTH_SHORT).show()
+                    enableButtons()
+                }
+
+                is SafeResponse.Loading -> {}
             }
         }
 
         profileViewModel.setNewPasswordResponse.observe(this) {
-            if (it.detail.isNotBlank()) {
-                Toast.makeText(this, it.detail, Toast.LENGTH_SHORT).show()
-                binding.contentSwitcher.showPrevious()
-                enableButtons()
+            when (it) {
+                is SafeResponse.Success -> {
+                    Toast.makeText(this, it.data?.detail ?: "", Toast.LENGTH_SHORT).show()
+                    binding.contentSwitcher.showPrevious()
+                    enableButtons()
+                }
+
+                is SafeResponse.Error -> {
+                    Toast.makeText(this, it.errorMsg ?: "", Toast.LENGTH_SHORT).show()
+                    enableButtons()
+                }
+
+                is SafeResponse.Loading -> {}
             }
         }
 

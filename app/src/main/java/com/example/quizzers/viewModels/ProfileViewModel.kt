@@ -128,9 +128,9 @@ class ProfileViewModel(
         get() = repository.leaderboardResponse
     val logoutResponseCd: LiveData<String>
         get() = repository.logoutResponse
-    val resetResponse: LiveData<ResetOtpResponseModel>
+    val resetResponse: LiveData<SafeResponse<ResetOtpResponseModel>>
         get() = repository.resetResponse
-    val setNewPasswordResponse: LiveData<SetNewPasswordResponseModel>
+    val setNewPasswordResponse: LiveData<SafeResponse<SetNewPasswordResponseModel>>
         get() = repository.setNewResponse
 
 }

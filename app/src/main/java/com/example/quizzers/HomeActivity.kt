@@ -41,6 +41,8 @@ import com.example.quizzers.viewModels.ProfileViewModel
 import com.example.quizzers.viewModels.ProfileViewModelFactory
 import com.example.quizzers.viewModels.QuizViewModel
 import com.example.quizzers.viewModels.ViewModelFactory
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textview.MaterialTextView
 import com.google.gson.Gson
@@ -122,6 +124,11 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
             getQuestions()
         }
+
+        MobileAds.initialize(this)
+
+        val adRequest = AdRequest.Builder().build()
+        binding.homeAdBanner.loadAd(adRequest)
 
         binding.catgRV.layoutManager =
             GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false)
