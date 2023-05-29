@@ -198,10 +198,10 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                                 this.first_name,
                                 this.last_name
                             )
-                            this.userprofile?.let {
+                            this.userProfile?.let {
                                 try {
                                     Log.d(TAG, "onCreate: null userProfile: $it")
-                                    Glide.with(this@HomeActivity).load(it.display_picture)
+                                    Glide.with(this@HomeActivity).load(it)
                                         .placeholder(R.drawable.ic_baseline_person_24)
                                         .error(R.drawable.ic_connection_error)
                                         .into(binding.profileIv)
@@ -227,6 +227,10 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                             binding.positionTv.setOnClickListener {
                                 showLeaderboard()
                             }
+                            binding.currentStreakTv.text =
+                                getString(R.string.currentStreak, userStreak?.currentStreak ?: 0)
+                            binding.longestStreakTv.text =
+                                getString(R.string.longestStreak, userStreak?.longestStreak ?: 0)
                         }
                     }
                 }
@@ -435,10 +439,18 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         dialog.show()
         profileViewModel.getLeaderboard(token)
         profileViewModel.leaderboardResponse.observe(this, Observer {
-            if (it !== null) {
-                //observer is called more than once (find why) so only update the list in observer
-                Log.d(TAG, "showLeaderboard: start: ${it[0]}")
-                adapter.submitList(it)
+            when (it) {
+                is SafeResponse.Error -> {}
+                is SafeResponse.Loading -> {
+                    lbBinding.shimmerLayout.visibility = View.VISIBLE
+                }
+
+                is SafeResponse.Success -> {
+                    //observer is called more than once (find why) so only update the list in observer
+                    lbBinding.shimmerLayout.visibility = View.VISIBLE
+                    Log.d(TAG, "showLeaderboard: start: ${it.data?.firstOrNull()}")
+                    adapter.submitList(it.data)
+                }
             }
         })
     }

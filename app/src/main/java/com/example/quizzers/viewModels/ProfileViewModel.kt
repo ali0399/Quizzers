@@ -124,7 +124,7 @@ class ProfileViewModel(
         get() = repository.picUploadResponse
     val usernameUpdateResponse: LiveData<UsernameUpdateModel>
         get() = repository.usernameUpdateResponse
-    val leaderboardResponse: LiveData<LeaderboardResponseModel>
+    val leaderboardResponse: LiveData<SafeResponse<LeaderboardResponseModel>>
         get() = repository.leaderboardResponse
     val logoutResponseCd: LiveData<String>
         get() = repository.logoutResponse

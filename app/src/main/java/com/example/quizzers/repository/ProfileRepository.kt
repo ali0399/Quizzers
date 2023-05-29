@@ -188,8 +188,8 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
     }
 
     //get leaderboard
-    private val mLeaderboardResponse = MutableLiveData<LeaderboardResponseModel>()
-    val leaderboardResponse: LiveData<LeaderboardResponseModel>
+    private val mLeaderboardResponse = MutableLiveData<SafeResponse<LeaderboardResponseModel>>()
+    val leaderboardResponse: LiveData<SafeResponse<LeaderboardResponseModel>>
         get() {
             return mLeaderboardResponse
         }
@@ -198,12 +198,12 @@ class ProfileRepository(private val quizzerProfileApi: QuizzerProfileApi) {
         try {
             val result = quizzerProfileApi.getLeaderboard(token)
             if (result.body() != null) {
-                mLeaderboardResponse.postValue(result.body())
+                mLeaderboardResponse.postValue(SafeResponse.Success(result.body()))
                 Log.d("getLeaderboardRepo", "getLeaderboard: ${result.body()}")
             }
         } catch (e: Exception) {
             val errorBody = LeaderboardResponseModel()
-            mLeaderboardResponse.postValue(errorBody)
+            mLeaderboardResponse.postValue(SafeResponse.Error(e.message.toString()))
         }
     }
 

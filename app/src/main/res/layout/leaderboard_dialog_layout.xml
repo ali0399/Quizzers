@@ -21,4 +21,14 @@
         android:paddingHorizontal="8dp"
         android:layout_height="wrap_content"
         tools:listitem="@layout/leaderboard_item_layout" />
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <include layout="@layout/leaderboard_loading_layout" />
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
 </LinearLayout>

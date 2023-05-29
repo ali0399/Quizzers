@@ -85,9 +85,9 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profileIv"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="25dp"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_marginTop="16dp"
                     android:background="@android:color/transparent"
                     android:clickable="true"
                     android:src="@drawable/ic_baseline_person_24"
@@ -133,6 +133,7 @@
                     app:layout_constraintStart_toEndOf="@id/profileIv"
                     app:layout_constraintTop_toTopOf="@+id/profileIv" />
 
+
                 <!--                <com.google.android.material.floatingactionbutton.FloatingActionButton-->
                 <!--                    android:id="@+id/editUsernameBtn"-->
                 <!--                    android:layout_width="wrap_content"-->
@@ -159,7 +160,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
-                    android:layout_marginVertical="16dp"
+                    android:layout_marginTop="24dp"
                     android:background="@drawable/round_corner_bg"
                     android:backgroundTint="@color/white1"
                     app:cardCornerRadius="15dp"
@@ -171,7 +172,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:paddingVertical="16dp"
+                        android:paddingVertical="8dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
@@ -183,7 +184,8 @@
                             android:layout_marginHorizontal="16dp"
                             android:background="@android:color/transparent"
                             android:gravity="center"
-                            android:padding="10dp"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="6dp"
                             android:text="SCORE"
                             android:textColor="@color/colorScheme3"
                             android:textSize="20sp"
@@ -226,7 +228,8 @@
                             android:layout_marginHorizontal="16dp"
                             android:background="@android:color/transparent"
                             android:gravity="center"
-                            android:padding="10dp"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="6dp"
                             android:text="POSITION"
                             android:textColor="@color/colorScheme3"
                             android:textSize="20sp"
@@ -249,8 +252,45 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="@id/divider"
                             app:layout_constraintTop_toBottomOf="@+id/positionLabel" />
+
+
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/currentStreakTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="@drawable/streak_bg"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="4dp"
+                    android:text="Current Streak:10"
+                    android:textColor="@color/white1"
+                    app:layout_constraintEnd_toEndOf="@id/guideline2"
+                    app:layout_constraintTop_toBottomOf="@+id/scoreContainer" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.50" />
+
+                <TextView
+                    android:id="@+id/longestStreakTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="@drawable/streak_bg"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="4dp"
+                    android:text="Longest Streak: 10"
+                    android:textColor="@color/white1"
+                    app:layout_constraintStart_toStartOf="@+id/guideline2"
+                    app:layout_constraintTop_toBottomOf="@+id/scoreContainer" />
 
                 <TextView
                     android:id="@+id/tvLetsPlay"
@@ -264,14 +304,14 @@
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/scoreContainer" />
+                    app:layout_constraintTop_toBottomOf="@id/currentStreakTv" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/catgRV"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="8dp"
                     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvLetsPlay"
