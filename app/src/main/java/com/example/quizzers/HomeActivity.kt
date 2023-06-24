@@ -343,8 +343,8 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     putString(TOKEN, "")
                 }.apply()
                 Log.d(TAG, "logout: code= $it")
-                startActivity(Intent(this, LoginActivity::class.java))
                 finish()
+                startActivity(Intent(this, LoginActivity::class.java))
             } else Toast.makeText(this, "Error logging out: $it", Toast.LENGTH_SHORT).show()
         })
 

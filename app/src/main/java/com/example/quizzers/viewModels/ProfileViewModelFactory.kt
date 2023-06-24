@@ -6,12 +6,11 @@ import com.example.quizzers.network.RetrofitHelper
 import com.example.quizzers.network.retrofit.QuizzerProfileApi
 import com.example.quizzers.repository.ProfileRepository
 
-class ProfileViewModelFactory :
-    ViewModelProvider.Factory {
-    val profileService =
+class ProfileViewModelFactory : ViewModelProvider.Factory {
+    private val profileService: QuizzerProfileApi =
         RetrofitHelper.getProfileInstance().create(QuizzerProfileApi::class.java)
-    val profileRepository = ProfileRepository(profileService)
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    private val profileRepository = ProfileRepository(profileService)
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return ProfileViewModel(profileRepository) as T
     }
 }

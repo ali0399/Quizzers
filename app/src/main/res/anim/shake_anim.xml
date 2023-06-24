@@ -5,5 +5,6 @@
         android:fromXDelta="-2%"
         android:repeatCount="3"
         android:repeatMode="reverse"
+        android:interpolator="@android:anim/cycle_interpolator"
         android:toXDelta="2%" />
 </set>

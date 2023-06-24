@@ -86,7 +86,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/switchLoginView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -94,6 +94,7 @@
         android:layout_marginBottom="32dp"
         android:background="@android:color/transparent"
         android:text="@string/switch_to_new_user"
+        android:longClickable="false"
         android:textAllCaps="false"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"

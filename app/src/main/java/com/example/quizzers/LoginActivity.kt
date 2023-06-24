@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent.ACTION_DOWN
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
@@ -137,40 +138,44 @@ class LoginActivity : AppCompatActivity() {
             disableButtons()
         }
 
-        binding.loginView.switchLoginView.setOnClickListener {
-            binding.loginView.switchLoginView.isEnabled = false
-            if (isNewUser) {  //currentView:NewUser| change view for login
-                isNewUser = false
-                with(binding.loginView.loginBtn) {
-                    buttonText = "Login"
-                    text = buttonText
-                    setOnClickListener {
-                        login()
+        binding.loginView.switchLoginView.setOnTouchListener { view, motionEvent ->
+            if (motionEvent.action == MotionEvent.ACTION_UP) {
+                view.isEnabled = false
+                if (isNewUser) {  //currentView:NewUser| change view for login
+                    isNewUser = false
+                    with(binding.loginView.loginBtn) {
+                        buttonText = "Login"
+                        text = buttonText
+                        setOnClickListener {
+                            login()
+                        }
                     }
-                    binding.loginView.switchLoginView.isEnabled = true
-                }
-                binding.loginView.usernameEt.editText!!.text.clear()
-                binding.loginView.passwordEt.editText!!.text.clear()
-                binding.loginView.usernameEt.hint = "Username"
-                binding.loginView.switchLoginView.text =
-                    resources.getText(R.string.switch_to_new_user)
-            } else {//currentView:Login| change view for new User
-                isNewUser = true
-                with(binding.loginView.loginBtn) {
-                    buttonText = "Create Account"
-                    text = buttonText
-                    setOnClickListener {
-                        createUser()
+                    binding.loginView.usernameEt.editText!!.text.clear()
+                    binding.loginView.passwordEt.editText!!.text.clear()
+                    binding.loginView.usernameEt.hint = "Username"
+                    binding.loginView.switchLoginView.text =
+                        resources.getText(R.string.switch_to_new_user)
+                } else {//currentView:Login| change view for new User
+                    isNewUser = true
+                    with(binding.loginView.loginBtn) {
+                        buttonText = "Create Account"
+                        text = buttonText
+                        setOnClickListener {
+                            createUser()
+                        }
                     }
-                    binding.loginView.switchLoginView.isEnabled = true
+                    binding.loginView.usernameEt.editText!!.text.clear()
+                    binding.loginView.passwordEt.editText!!.text.clear()
+                    binding.loginView.usernameEt.hint = "Email Id"
+                    binding.loginView.switchLoginView.text =
+                        resources.getText(R.string.switch_to_login)
                 }
-                binding.loginView.usernameEt.editText!!.text.clear()
-                binding.loginView.passwordEt.editText!!.text.clear()
-                binding.loginView.usernameEt.hint = "Email Id"
-                binding.loginView.switchLoginView.text = resources.getText(R.string.switch_to_login)
+                view.isEnabled = true
+                view.performClick()
+            } else {
+                return@setOnTouchListener false
             }
         }
-
     }
 
     private fun createUser() {

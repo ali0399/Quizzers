@@ -7,10 +7,11 @@ import com.example.quizzers.network.retrofit.QuizzerApi
 import com.example.quizzers.repository.QuizzerRepository
 
 class ViewModelFactory : ViewModelProvider.Factory {
-    val quizService = RetrofitHelper.getQuizInstance().create(QuizzerApi::class.java)
+    private val quizService: QuizzerApi =
+        RetrofitHelper.getQuizInstance().create(QuizzerApi::class.java)
     val repository = QuizzerRepository(quizService)
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return QuizViewModel(repository) as T
     }
 
