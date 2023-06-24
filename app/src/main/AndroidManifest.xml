@@ -31,6 +31,7 @@
         <activity
             android:name=".GamePlayActivity"
             android:exported="false"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".MainActivity"

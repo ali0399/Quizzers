@@ -432,22 +432,26 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         lbBinding.recyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         lbBinding.recyclerView.adapter = adapter
-        val dialog = AlertDialog.Builder(this)
+        val dialogBuilder = AlertDialog.Builder(this)
             .setView(lbBinding.root)
             .setNegativeButton("Close") { dialog, which -> dialog.dismiss() }
 
-        dialog.show()
+        val dialog = dialogBuilder.show()
         profileViewModel.getLeaderboard(token)
         profileViewModel.leaderboardResponse.observe(this, Observer {
             when (it) {
-                is SafeResponse.Error -> {}
+                is SafeResponse.Error -> {
+                    dialog.dismiss()
+                    lbBinding.shimmerLayout.visibility = View.GONE
+                }
+
                 is SafeResponse.Loading -> {
                     lbBinding.shimmerLayout.visibility = View.VISIBLE
                 }
 
                 is SafeResponse.Success -> {
                     //observer is called more than once (find why) so only update the list in observer
-                    lbBinding.shimmerLayout.visibility = View.VISIBLE
+                    lbBinding.shimmerLayout.visibility = View.GONE
                     Log.d(TAG, "showLeaderboard: start: ${it.data?.firstOrNull()}")
                     adapter.submitList(it.data)
                 }

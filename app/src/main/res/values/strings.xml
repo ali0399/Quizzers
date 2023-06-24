@@ -20,6 +20,7 @@
     <string name="reset_email">Reset password for %s</string>
     <string name="currentStreak">Current Streak: %d</string>
     <string name="longestStreak">Longest Streak: %d</string>
+    <string name="score">Score</string>
 
     <string-array name="categories">
         <item>Mixed Bag</item>

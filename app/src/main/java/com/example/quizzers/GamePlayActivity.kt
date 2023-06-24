@@ -79,11 +79,11 @@ class GamePlayActivity : AppCompatActivity() {
                         dialogBinding.messageTv.text = "Keep calm... You are almost there"
                     }
                     mScore == 9 -> {
-                        dialogBinding.messageTv.text = "Can you believe it 😱 !?"
+                        dialogBinding.messageTv.text = "Can you believe it 😱!?!"
                     }
                     mScore == 10 -> {
                         dialogBinding.messageTv.text =
-                            "That was Legen... wait-4-it...dary, Legendary!!!"
+                            "That was Legen... wait-4-it...dary,\nLegendary!!!"
                     }
                 }
                 if (mScore > 5) {
@@ -102,19 +102,19 @@ class GamePlayActivity : AppCompatActivity() {
                     .create()
                 dialogBinding.doneBtn.setOnClickListener {
                     binding.scoreUploadProgress.visibility = View.VISIBLE
-
-                    profileViewModel = ViewModelProvider(
-                        this@GamePlayActivity,
-                        ProfileViewModelFactory()
-                    ).get(ProfileViewModel::class.java)
+                    profileViewModel =
+                        ViewModelProvider(this@GamePlayActivity, ProfileViewModelFactory())
+                            .get(ProfileViewModel::class.java)
                     val scoreRequest = CreateScoreRequestModel(10, correctAttempts, mScore)
                     val token = prefs.getString("Token", "")!!
                     profileViewModel.createScore(token, scoreRequest)
-                    profileViewModel.createScoreResponse.observe(this@GamePlayActivity,
+                    profileViewModel.createScoreResponse.observe(
+                        this@GamePlayActivity,
                         Observer {
                             Log.d(TAG, "onFinish: create score : $it")
                             if (it != null) {
-//                                dialog.dismiss()
+                                dialog.dismiss()
+                                finish()
                                 startActivity(
                                     Intent(
                                         this@GamePlayActivity,
@@ -310,8 +310,8 @@ class GamePlayActivity : AppCompatActivity() {
             .setTitle("Exit")
             .setMessage("Are you sure?")
             .setPositiveButton("Yes") { dialog, which ->
-                startActivity(Intent(this@GamePlayActivity, HomeActivity::class.java))
                 finish()
+                startActivity(Intent(this@GamePlayActivity, HomeActivity::class.java))
             }
             .setNegativeButton("No") { dialog, which ->
                 dialog.dismiss()
