@@ -1,7 +1,9 @@
 package com.example.quizzers.network.models
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
+@Keep
 data class ProfileDetailResponseModel(
     val email: String = "",
     val first_name: String = "",
@@ -18,6 +20,7 @@ data class ProfileDetailResponseModel(
     val userStreak: UserStreak? = null
 )
 
+@Keep
 data class UserStreak(
     @SerializedName("current_streak")
     val currentStreak: Int = 0,
@@ -25,6 +28,7 @@ data class UserStreak(
     val longestStreak: Int = 0
 )
 
+@Keep
 data class Userprofile(
     val display_picture: String,
 )

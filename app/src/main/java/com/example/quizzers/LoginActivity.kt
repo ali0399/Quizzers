@@ -138,6 +138,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.loginView.switchLoginView.setOnClickListener {
+            binding.loginView.switchLoginView.isEnabled = false
             if (isNewUser) {  //currentView:NewUser| change view for login
                 isNewUser = false
                 with(binding.loginView.loginBtn) {
@@ -146,6 +147,7 @@ class LoginActivity : AppCompatActivity() {
                     setOnClickListener {
                         login()
                     }
+                    binding.loginView.switchLoginView.isEnabled = true
                 }
                 binding.loginView.usernameEt.editText!!.text.clear()
                 binding.loginView.passwordEt.editText!!.text.clear()
@@ -160,6 +162,7 @@ class LoginActivity : AppCompatActivity() {
                     setOnClickListener {
                         createUser()
                     }
+                    binding.loginView.switchLoginView.isEnabled = true
                 }
                 binding.loginView.usernameEt.editText!!.text.clear()
                 binding.loginView.passwordEt.editText!!.text.clear()
