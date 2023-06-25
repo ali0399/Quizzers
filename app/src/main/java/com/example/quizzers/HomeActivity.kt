@@ -201,7 +201,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                             this.userProfile?.let {
                                 try {
                                     Log.d(TAG, "onCreate: null userProfile: $it")
-                                    Glide.with(this@HomeActivity).load(it)
+                                    Glide.with(this@HomeActivity).load(it.display_picture)
                                         .placeholder(R.drawable.ic_baseline_person_24)
                                         .error(R.drawable.ic_connection_error)
                                         .into(binding.profileIv)
