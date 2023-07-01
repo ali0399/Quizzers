@@ -277,10 +277,6 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         quizViewModel =
             ViewModelProvider(this, ViewModelFactory()).get(QuizViewModel::class.java)
 
-//        binding.startQuizBtn.setOnClickListener {
-//            showCategoryDialog()
-//
-//        }
 
         binding.usernameTv.setOnClickListener {
             val dialog = AlertDialog.Builder(this)
@@ -288,8 +284,8 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             dialogBinding.firstNameEt.setText(userFirstName)
             dialogBinding.lastNameEt.setText(userLastName)
             dialog.setView(dialogBinding.root)
-                .setTitle("Enter New Username")
-                .setPositiveButton("Edit", DialogInterface.OnClickListener { dialog, which ->
+                .setTitle("Edit Username")
+                .setPositiveButton("Save", DialogInterface.OnClickListener { dialog, which ->
                     updateUsername(
                         dialogBinding.firstNameEt.text.toString(),
                         dialogBinding.lastNameEt.text.toString()
