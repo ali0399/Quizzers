@@ -71,7 +71,6 @@ class LoginActivity : AppCompatActivity() {
         ).get(ProfileViewModel::class.java)
 
         binding.loginView.loginBtn.setOnClickListener {
-            throw RuntimeException("Test Crash")
             login()
         }
 
