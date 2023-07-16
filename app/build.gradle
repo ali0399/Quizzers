@@ -1,13 +1,15 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.quizzers"
+        applicationId "com.quizzers"
         minSdk 26
         targetSdk 33
         versionCode 1
@@ -32,9 +34,13 @@ android {
         release {
             manifestPlaceholders = [app_name: "Quizerz"]
             minifyEnabled true
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
+            manifestPlaceholders = [app_name: "Quizerz Debug"]
+            applicationIdSuffix ".debug"
+            debuggable true
         }
         stage {
             debuggable = true
@@ -133,6 +139,10 @@ dependencies {
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     implementation 'com.airbnb.android:lottie:5.2.0'
     implementation 'com.google.android.gms:play-services-ads:22.0.0'
+
+    implementation(platform 'com.google.firebase:firebase-bom:32.1.1')
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 
     implementation 'androidx.core:core-splashscreen:1.0.0-beta02'
 

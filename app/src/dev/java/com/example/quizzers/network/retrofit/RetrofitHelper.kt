@@ -1,4 +1,4 @@
-package com.example.quizzers.network.retrofit
+package com.quizzers.network.retrofit
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
