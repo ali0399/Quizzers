@@ -310,6 +310,7 @@ class GamePlayActivity : AppCompatActivity() {
             .setTitle("Exit")
             .setMessage("Are you sure?")
             .setPositiveButton("Yes") { dialog, which ->
+                dialog.dismiss()
                 finish()
                 startActivity(Intent(this@GamePlayActivity, HomeActivity::class.java))
             }

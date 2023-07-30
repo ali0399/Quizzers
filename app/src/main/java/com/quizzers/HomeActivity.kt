@@ -297,7 +297,8 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             dialog.show()
         }
         binding.profileIv.setOnClickListener {
-            getPermissions()
+//            getPermissions()
+            pickFile()
         }
     }
 
