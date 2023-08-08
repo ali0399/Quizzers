@@ -2,7 +2,6 @@ package com.quizzers
 
 import android.animation.ValueAnimator
 import android.content.ContentResolver
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -20,7 +19,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
@@ -91,7 +89,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: start")
-        val splashScreen = installSplashScreen()
+//        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -285,15 +283,15 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             dialogBinding.lastNameEt.setText(userLastName)
             dialog.setView(dialogBinding.root)
                 .setTitle("Edit Username")
-                .setPositiveButton("Save", DialogInterface.OnClickListener { dialog, which ->
+                .setPositiveButton("Save") { _, _ ->
                     updateUsername(
                         dialogBinding.firstNameEt.text.toString(),
                         dialogBinding.lastNameEt.text.toString()
                     )
-                })
-                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.cancel()
-                })
+                }
             dialog.show()
         }
         binding.profileIv.setOnClickListener {

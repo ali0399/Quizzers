@@ -1,6 +1,6 @@
 package com.quizzers.network
 
-import androidx.viewbinding.BuildConfig
+import com.quizzers.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
